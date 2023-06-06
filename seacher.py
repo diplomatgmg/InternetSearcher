@@ -10,11 +10,12 @@ def get_correct_num(min_num: int, max_num: int, blank=False) -> int | str:
         if blank and result == "":
             return min_num
 
-        if result == "00":
-            return result
-
         if result.isdigit():
             result = int(result)
+
+            if result == 0:
+                return result
+
             if min_num <= result <= max_num:
                 return result
         print(
@@ -50,12 +51,12 @@ def search(keywords: list):
     min_num = 1
     max_num = 96
     print(
-        f"За какое время искать? (в часах). От {min_num} до {max_num}. Ввести заново ключевые слова - 00."
+        f"За какое время искать? (в часах). От {min_num} до {max_num}. Ввести заново ключевые слова - 0."
     )
     result = get_correct_num(min_num, max_num, blank=True)
 
-    if result == "00":
-        return main.main(False)
+    if result == 0:
+        return main.main(False, keywords)
 
     print_hours_message(result)
 
