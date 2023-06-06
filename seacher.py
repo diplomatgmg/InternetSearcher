@@ -1,4 +1,4 @@
-from googletrans import Translator
+from threading import Thread
 
 import main
 
@@ -34,15 +34,11 @@ def print_hours_message(hours: int) -> None:
         print(f"Выполняется поиск новостей за последние {hours} часов")
 
 
-def translate_keywords(keywords: list, language: str) -> list:
-    tr = Translator()
-
-    result = []
-
-    for word in keywords:
-        result.append(tr.translate(word, language).lower())
-
-    return result
+def translate_keywords(keywords: list, to_language: str) -> list:
+    return [
+        main.translator.translate(word, to_language, "ru").text.lower()
+        for word in keywords
+    ]
 
 
 def search(keywords: list):
@@ -61,4 +57,14 @@ def search(keywords: list):
     print_hours_message(result)
 
     en_keywords = translate_keywords(keywords, "en")
+    de_keywords = translate_keywords(keywords, "de")
+    fr_keywords = translate_keywords(keywords, "fr")
+    pl_keywords = translate_keywords(keywords, "pl")
+
     print(en_keywords)
+    print(de_keywords)
+    print(fr_keywords)
+    print(pl_keywords)
+
+
+

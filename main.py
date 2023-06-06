@@ -1,5 +1,7 @@
 import os
 
+from googletrans import Translator
+
 import seacher
 
 
@@ -25,7 +27,7 @@ def main(preview=True, old_keywords=None):
             f"Прошлые ключевые слова: {old_keywords}.\n"
             f"Введите ключевые слова или нажмите Enter, чтобы оставить прошлые.\n"
         )
-        if keywords == '':
+        if keywords == "":
             return seacher.search(old_keywords)
 
     if not keywords:
@@ -37,6 +39,8 @@ def main(preview=True, old_keywords=None):
 
     return seacher.search(keywords)
 
+
+translator = Translator()
 
 if __name__ == "__main__":
     main()
