@@ -1,9 +1,13 @@
+import logging
 from datetime import datetime, timedelta
 from threading import Thread
 
 import main
 from default import color
 from default import translator
+
+# TODO
+global_keywords = []
 
 
 def get_correct_num(min_num: int, max_num: int, blank=False) -> int | str:
@@ -45,6 +49,8 @@ def translate_keywords(keywords: list, to_language: str) -> list:
 
 
 def search(keywords: list):
+    global global_keywords
+    global_keywords = keywords
     print(f"Ключевые слова: {color(str(keywords), 'cyan')}")
 
     min_num = 1
@@ -71,6 +77,7 @@ def search(keywords: list):
     china_daily_thread = Thread(
         target=start_china_daily, args=(en_keywords, time_interval)
     )
+
     china_daily_thread.start()
 
 
@@ -81,4 +88,24 @@ def start_china_daily(keywords: list, time_interval: datetime):
     status = china_daily.check_connection()
 
     if status:
-        china_daily.start()
+        logger(china_daily)
+
+
+def logger(class_object):
+    try:
+        class_object.start()
+        print(class_object.get_count_sent_posts())
+    except:
+        print(color(f"Ошибка при работе с [{class_object.__class__.__name__}]. "
+                    f"Логи сохранены в файл под названием {class_object.__class__.__name__}.log", "red", "bold"))
+        logging.basicConfig(
+            level=logging.ERROR,
+            filename=f"{class_object.__class__.__name__}.log",
+            filemode="w",
+            format="%(asctime)s %(levelname)s %(message)s",
+        )
+
+        logging.error(
+            f"Ошибка при работе с [ChinaDaily]. Keywords: {global_keywords}",
+            exc_info=True,
+        )

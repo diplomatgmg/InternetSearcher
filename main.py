@@ -4,9 +4,6 @@ from sites.china_daily import ChinaDaily
 
 SITES = [
     ChinaDaily(),
-    ChinaDaily(),
-    ChinaDaily(),
-    ChinaDaily(),
 ]
 
 

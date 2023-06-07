@@ -1,51 +1,15 @@
 import datetime
 import re
-from http import HTTPStatus
 
-import requests
 from bs4 import BeautifulSoup
 
-from default import bad_request_message, good_request_message, color
+from default import color
 from default import translator
+from sites.base import BaseParser
 
 
-class ChinaDaily:
+class ChinaDaily(BaseParser):
     SITE_URL = "https://www.chinadaily.com.cn/"
-
-    def __init__(self, keywords: list = None, time_interval: datetime = None) -> None:
-        self.keywords = keywords
-        self.time_interval = time_interval
-        self.categories_hrefs = set()
-        self.subcategories_hrefs = set()
-        self.posts_hrefs = set()
-
-    def check_connection(
-        self, page: str = None, printable=False
-    ) -> requests.Response | bool:
-        try:
-            response = requests.get(page or self.SITE_URL)
-
-            if response.status_code != HTTPStatus.OK:
-                bad_request_message(self.__class__.__name__)
-
-            if printable:
-                good_request_message(self.__class__.__name__)
-
-            return response
-
-        except requests.ConnectionError:
-            print(
-                color("Проверьте соединение с интернетом.", "red", "bold"),
-                color("Для выхода закройте окно или нажмите Enter.", "red"),
-                sep="\n",
-            )
-            exit(input())
-
-    def start(self):
-        self.get_categories_hrefs()
-        self.get_subcategories_hrefs()
-        self.get_posts()
-        self.send_posts()
 
     def get_categories_hrefs(self) -> None | bool:
         page = self.check_connection(self.SITE_URL)
@@ -121,8 +85,12 @@ class ChinaDaily:
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-            header = soup.find("div", class_="lft_art").find("h1")
-            paragraphs = soup.find("div", id="Content").find_all("p")
+
+            try:
+                header = soup.find("div", class_="lft_art").find("h1")
+                paragraphs = soup.find("div", id="Content").find_all("p")
+            except AttributeError:
+                continue
 
             if not header or not paragraphs:
                 continue
@@ -133,8 +101,13 @@ class ChinaDaily:
             parse_text = (header_text + " " + content_text).lower()
 
             if any(keyword in parse_text for keyword in self.keywords):
-                first_paragraph = paragraphs[0].text.strip()
-                second_paragraph = paragraphs[1].text.strip()
+                if len(paragraphs) > 1:
+                    first_paragraph = paragraphs[0].text.strip()
+                    second_paragraph = paragraphs[1].text.strip()
+                else:
+                    first_paragraph, second_paragraph = (
+                        paragraphs[0].text.strip().split(".", maxsplit=1)
+                    )
 
                 to_translate = (
                     f"{header_text}\n"
@@ -144,9 +117,7 @@ class ChinaDaily:
                     f"{second_paragraph}"
                 )
 
-                if len(to_translate) < 250:
-                    third_paragraph = paragraphs[2].text.strip()
-                    to_translate += f"\n\n{third_paragraph}"
+                self.num_sent_posts += 1
 
                 to_send = translator.translate(to_translate, dest="ru").text
 
@@ -155,13 +126,6 @@ class ChinaDaily:
                 print(
                     f"{color('Новость подходит!', 'green')} {color('[China Daily]', 'cyan', 'bold')}"
                 )
+
+                # TODO
                 # send_telegram(to_send)
-
-
-# test_time = datetime.datetime.now() - datetime.timedelta(hours=24)
-# keywords = ["world", "and", "not", "but"]
-#
-# china_daily = ChinaDaily(keywords, test_time)
-#
-# china_daily.check_connection()
-# china_daily.start()
