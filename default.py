@@ -19,6 +19,10 @@ class Color:
         return f"{result}{message}{self.RESET}"
 
 
+def check_sites_connection(sites):
+    for site in sites:
+        site.check_connection(printable=True)
+
 def bad_request_message(name_site):
     print(
         color(name_site, "red", "bold"),

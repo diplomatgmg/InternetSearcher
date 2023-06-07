@@ -128,7 +128,6 @@ class ChinaDaily(BaseParser):
                 to_send = translator.translate(to_translate, dest="ru").text
 
                 to_send += f"\n\n{post_href}"
-                print(to_send)
 
                 print(
                     f"{color('Новость подходит!', 'green')} {color(f'[{self.__class__.__name__}]', 'cyan', 'bold')}"
