@@ -3,7 +3,11 @@ from threading import Thread
 import main
 from default import color
 from default import translator
-from start_parsers import start_china_daily, start_dziennik_wschodni
+from start_parsers import (
+    start_china_daily,
+    start_dziennik_wschodni,
+    start_khaleej_times,
+)
 
 # TODO
 global_keywords = []
@@ -78,6 +82,10 @@ def search(keywords: list):
     dziennik_wschodni_thread = Thread(
         target=start_dziennik_wschodni, args=(pl_keywords, time_interval)
     )
+    khaleej_times_thread = Thread(
+        target=start_khaleej_times, args=(en_keywords, time_interval)
+    )
 
     china_daily_thread.start()
     dziennik_wschodni_thread.start()
+    khaleej_times_thread.start()

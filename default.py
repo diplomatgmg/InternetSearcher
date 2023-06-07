@@ -1,3 +1,6 @@
+import time
+
+import httpcore
 from googletrans import Translator
 
 
@@ -23,6 +26,7 @@ def check_sites_connection(sites):
     for site in sites:
         site.check_connection(printable=True)
 
+
 def bad_request_message(name_site):
     print(
         color(name_site, "red", "bold"),
@@ -37,5 +41,20 @@ def good_request_message(name_site):
     )
 
 
-translator = Translator()
+class Trans(Translator):
+    def translate(self, *args, **kwargs):
+        retries = 0
+        while True:
+            try:
+                return super().translate(*args, **kwargs)
+            except httpcore.ReadError:
+                if retries == 10:
+                    raise httpcore.ReadError('Возникла ошибка при переводе.')
+
+                retries += 1
+                time.sleep(2)
+
+
+translator = Trans()
+
 color = Color().color

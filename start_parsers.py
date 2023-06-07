@@ -4,6 +4,7 @@ from default import color
 import seacher
 from sites.china_daily import ChinaDaily
 from sites.dziennik_wschodni import DziennikWschodni
+from sites.khaleejtimes import KhaleejTimes
 
 
 def start_with_logger(class_object):
@@ -27,7 +28,7 @@ def start_with_logger(class_object):
         )
 
         logging.error(
-            f"Ошибка при работе с [ChinaDaily]. Keywords: {seacher.global_keywords}",
+            f"Ошибка при работе с [{class_object.__class__.__name__}]. Keywords: {seacher.global_keywords}",
             exc_info=True,
         )
 
@@ -46,3 +47,11 @@ def start_dziennik_wschodni(keywords: list, time_interval: int):
 
     if status:
         start_with_logger(china_daily)
+
+
+def start_khaleej_times(keywords: list, time_interval: int):
+    khaleej_times = KhaleejTimes(keywords, time_interval)
+    status = khaleej_times.check_connection()
+
+    if status:
+        start_with_logger(khaleej_times)

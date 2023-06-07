@@ -2,11 +2,9 @@ import seacher
 from default import color, check_sites_connection
 from sites.china_daily import ChinaDaily
 from sites.dziennik_wschodni import DziennikWschodni
+from sites.khaleejtimes import KhaleejTimes
 
-SITES = [
-    ChinaDaily(),
-    DziennikWschodni(),
-]
+SITES = [ChinaDaily(), DziennikWschodni(), KhaleejTimes(),]
 
 
 def main(preview=True, old_keywords=None):

@@ -1,8 +1,9 @@
 from datetime import timedelta, datetime
 
+import requests
 from bs4 import BeautifulSoup
 
-from default import translator, color
+from default import translator
 from sites.base import BaseParser
 
 
@@ -11,6 +12,13 @@ class DziennikWschodni(BaseParser):
         super().__init__(*args, *kwargs)
         self.SITE_URL = self.get_site_url()
         self.pages_hrefs = {self.SITE_URL}
+
+    def get_session(self):
+        session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
+        session.mount("https://", adapter)
+        return session
+        pass
 
     @staticmethod
     def get_main_page():
@@ -107,10 +115,7 @@ class DziennikWschodni(BaseParser):
 
                 to_send += f"\n\n{post_href}"
 
-                print(
-                    f"{color('Новость подходит!', 'green')} {color(f'[{self.__class__.__name__}]', 'cyan', 'bold')}"
-                )
-
+                self.print_send_post()
 
                 # TODO
                 # send_telegram(to_send)
