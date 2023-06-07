@@ -1,10 +1,9 @@
-import logging
-from datetime import datetime, timedelta
 from threading import Thread
 
 import main
 from default import color
 from default import translator
+from start_parsers import start_china_daily, start_dziennik_wschodni
 
 # TODO
 global_keywords = []
@@ -60,52 +59,25 @@ def search(keywords: list):
         f"От {color(min_num, 'cyan')} до {color(max_num, 'cyan')}. "
         f"Ввести заново ключевые слова - {color('0', 'cyan')}."
     )
-    result = get_correct_num(min_num, max_num, blank=True)
+    time_interval = get_correct_num(min_num, max_num, blank=True)
 
-    if result == 0:
+    if time_interval == 0:
         return main.main(False, keywords)
 
-    print_hours_message(result)
-
-    time_interval = datetime.now() - timedelta(hours=result)
+    print_hours_message(time_interval)
 
     en_keywords = translate_keywords(keywords, "en")
+    pl_keywords = translate_keywords(keywords, "pl")
+
     # de_keywords = translate_keywords(keywords, "de")
     # fr_keywords = translate_keywords(keywords, "fr")
-    # pl_keywords = translate_keywords(keywords, "pl")
 
     china_daily_thread = Thread(
         target=start_china_daily, args=(en_keywords, time_interval)
     )
+    dziennik_wschodni_thread = Thread(
+        target=start_dziennik_wschodni, args=(pl_keywords, time_interval)
+    )
 
     china_daily_thread.start()
-
-
-def start_china_daily(keywords: list, time_interval: datetime):
-    from sites.china_daily import ChinaDaily
-
-    china_daily = ChinaDaily(keywords, time_interval)
-    status = china_daily.check_connection()
-
-    if status:
-        logger(china_daily)
-
-
-def logger(class_object):
-    try:
-        class_object.start()
-        print(class_object.get_count_sent_posts())
-    except:
-        print(color(f"Ошибка при работе с [{class_object.__class__.__name__}]. "
-                    f"Логи сохранены в файл под названием {class_object.__class__.__name__}.log", "red", "bold"))
-        logging.basicConfig(
-            level=logging.ERROR,
-            filename=f"{class_object.__class__.__name__}.log",
-            filemode="w",
-            format="%(asctime)s %(levelname)s %(message)s",
-        )
-
-        logging.error(
-            f"Ошибка при работе с [ChinaDaily]. Keywords: {global_keywords}",
-            exc_info=True,
-        )
+    dziennik_wschodni_thread.start()

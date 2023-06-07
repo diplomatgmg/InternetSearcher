@@ -11,6 +11,12 @@ from sites.base import BaseParser
 class ChinaDaily(BaseParser):
     SITE_URL = "https://www.chinadaily.com.cn/"
 
+    def start(self):
+        self.get_categories_hrefs()
+        self.get_subcategories_hrefs()
+        self.get_posts()
+        self.send_posts()
+
     def get_categories_hrefs(self) -> None | bool:
         page = self.check_connection(self.SITE_URL)
 
@@ -66,7 +72,7 @@ class ChinaDaily(BaseParser):
                 str_time = post.find("span", class_="tw3_01_2_t").find("b").text
                 post_time = datetime.datetime.strptime(str_time, "%Y-%m-%d %H:%M")
 
-                if post_time < self.time_interval:
+                if post_time <= self.time_interval:
                     break
 
                 post_raw_href = post.find("a", href=True)["href"]
@@ -122,10 +128,13 @@ class ChinaDaily(BaseParser):
                 to_send = translator.translate(to_translate, dest="ru").text
 
                 to_send += f"\n\n{post_href}"
+                print(to_send)
 
                 print(
-                    f"{color('Новость подходит!', 'green')} {color('[China Daily]', 'cyan', 'bold')}"
+                    f"{color('Новость подходит!', 'green')} {color(f'[{self.__class__.__name__}]', 'cyan', 'bold')}"
                 )
 
                 # TODO
-                # send_telegram(to_send)
+
+
+# send_telegram(to_send)

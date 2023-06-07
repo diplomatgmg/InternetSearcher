@@ -1,9 +1,11 @@
 import seacher
 from default import color
 from sites.china_daily import ChinaDaily
+from sites.dziennik_wschodni import DziennikWschodni
 
 SITES = [
     ChinaDaily(),
+    DziennikWschodni(),
 ]
 
 
@@ -28,13 +30,25 @@ def main(preview=True, old_keywords=None):
             return seacher.search(old_keywords)
 
     if not keywords:
-        keywords = input("\nВведите через пробел ключевые слова для поиска:\n")
+        keywords = input(
+            "\nВведите через пробел ключевые слова для поиска.\n"
+            "Для поиска двух слов используйте '+'. "
+            "Например: 'путин+сказал'\n"
+        )
 
-    keywords = "".join(
-        letter.lower() for letter in keywords if letter.isalpha() or letter.isspace()
-    ).split()
+    keywords = combine_words(keywords)
 
     return seacher.search(keywords)
+
+
+def combine_words(words: str):
+    result = []
+
+    for word in words.split():
+        word = " ".join(word.split("="))
+        result.append(word)
+
+    return result
 
 
 if __name__ == "__main__":
