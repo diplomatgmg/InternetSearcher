@@ -1,8 +1,8 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 
 from default import translator
 from sites.base import BaseParser
@@ -42,10 +42,38 @@ class KhaleejTimes(BaseParser):
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-            post_divs = soup.find_all("div", class_="post-thumbnail")
-            for post_div in post_divs:
-                page_href = post_div.find("a", href=True)["href"]
+
+            posts_divs = soup.find_all("article", class_="post")
+
+            time_pattern = r"(\d) (\w+) (\w+)"
+            for post_div in posts_divs:
+                str_time_raw = str(
+                    post_div(text=lambda text: isinstance(text, Comment))[0]
+                )
+                str_time = re.search(time_pattern, str_time_raw)
+                num_time = int(str_time.group(1))
+                name_time = str_time.group(2)
+                post_time = self.parse_str_time(num_time, name_time)
+
+                if not post_time or post_time <= self.time_interval:
+                    continue
+
+                page_href = post_div.find("h2", class_="post-title").find("a")["href"]
                 self.posts_hrefs.add(page_href)
+
+    def parse_str_time(self, num_time: int, name_time: str):
+        if name_time.startswith("minute"):
+            return datetime.now() - timedelta(minutes=num_time)
+        elif name_time.startswith("hour"):
+            return datetime.now() - timedelta(hours=num_time)
+        elif name_time.startswith("day"):
+            return datetime.now() - timedelta(days=num_time)
+        elif (
+            name_time.startswith("month")
+            or name_time.startswith("week")
+            or name_time.startswith("year")
+        ):
+            return False
 
     def send_posts(self):
         for post_href in self.posts_hrefs:
@@ -55,17 +83,6 @@ class KhaleejTimes(BaseParser):
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-
-            raw_post_time = soup.find("div", class_="article-top-author-nw-nf-right")
-
-            if not raw_post_time:
-                continue
-
-            raw_post_time = raw_post_time.find("p").text
-            post_time = self.convert_time(raw_post_time)
-
-            if post_time <= self.time_interval:
-                continue
 
             parse_text_raw = soup.find("div", class_="article-paragraph-wrapper")
             if not parse_text_raw:
@@ -132,5 +149,3 @@ class KhaleejTimes(BaseParser):
 
         date_time = datetime(int(year), month_number, int(day), hour, minute)
         return date_time
-
-
