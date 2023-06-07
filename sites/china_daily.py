@@ -99,19 +99,26 @@ class ChinaDaily(BaseParser):
 
             soup = BeautifulSoup(page.content, "html.parser")
 
-            try:
-                header = soup.find("div", class_="lft_art").find("h1")
-                paragraphs = soup.find("div", id="Content").find_all("p")
-            except AttributeError:
+            header = soup.find("div", class_="lft_art")
+
+            if header:
+                header = header.find("h1")
+
+            if not header:
+                header = soup.find("div", class_="ce_art")
+
+            if not header:
+                header = soup.find("h1")
+
+            header = header.text.strip()
+            paragraphs = soup.find("div", id="Content").find_all("p")
+
+            if not paragraphs:
                 continue
 
-            if not header or not paragraphs:
-                continue
-
-            header_text = header.text.strip()
             content_text = " ".join(paragraph.text.strip() for paragraph in paragraphs)
 
-            parse_text = (header_text + " " + content_text).lower()
+            parse_text = (header + " " + content_text).lower()
 
             if any(keyword in parse_text for keyword in self.keywords):
                 if len(paragraphs) > 1:
@@ -123,7 +130,7 @@ class ChinaDaily(BaseParser):
                     )
 
                 to_translate = (
-                    f"{header_text}\n"
+                    f"{header}\n"
                     f"\n"
                     f"{first_paragraph}\n"
                     f"\n"
@@ -139,6 +146,8 @@ class ChinaDaily(BaseParser):
                 self.print_send_post()
 
                 # TODO
+            else:
+                print(post_href)
 
 
 # send_telegram(to_send)
