@@ -10,36 +10,41 @@ from default import bad_request_message, good_request_message, color
 
 class BaseParser(ABC):
     SITE_URL = None
+    session = None
 
-    def __init__(
-        self, keywords: list | bool = False, time_interval: int | bool = False
-    ) -> None:
+    def __init__(self, keywords: list = None, time_interval: int = False) -> None:
         self.keywords = keywords
         self.time_interval = datetime.now() - timedelta(hours=time_interval)
 
         self.categories_hrefs = set()
         self.subcategories_hrefs = set()
+        self.pages_hrefs = set()
         self.posts_hrefs = set()
         self.num_sent_posts = 0
-        self.session = self.get_session()
 
-    @abstractmethod
-    def get_session(self):
-        pass
+    @classmethod
+    def get_session(cls):
+        session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
+        session.mount("https://", adapter)
+        cls.session = session
+        return cls.session
 
+    @classmethod
     def check_connection(
-        self, page: str = None, printable=False
+        cls, page: str = None, printable=False
     ) -> requests.Response | bool:
         retries = 0
+        session = cls.session or cls.get_session()
         while True:
             try:
-                response = self.session.get(page or self.SITE_URL, timeout=10)
+                response = session.get(page or cls.SITE_URL, timeout=10)
 
                 if response.status_code != HTTPStatus.OK:
-                    bad_request_message(self.__class__.__name__)
+                    bad_request_message(cls.__name__)
 
                 if printable:
-                    good_request_message(self.__class__.__name__)
+                    good_request_message(cls.__name__)
 
                 return response
 
@@ -49,13 +54,13 @@ class BaseParser(ABC):
                 if retries == 10:
                     print(
                         f"{color('Издание', 'red')} "
-                        f"[{color(self.__class__.__name__, 'cyan')}] "
+                        f"[{color(cls.__name__, 'cyan')}] "
                         f"{color('не ответило.', 'red')}"
                     )
                     return False
                 print(
                     f"{color('Издание', 'red')} "
-                    f"[{color(self.__class__.__name__, 'cyan')}] "
+                    f"[{color(cls.__name__, 'cyan')}] "
                     f"{color('не отвечает. Идет повторное подключение...', 'red')}"
                 )
                 retries += 1
@@ -70,6 +75,18 @@ class BaseParser(ABC):
 
     @abstractmethod
     def start(self):
+        pass
+
+    def get_categories_hrefs(self):
+        pass
+
+    def get_pages_hrefs(self):
+        pass
+
+    def get_posts_hrefs(self):
+        pass
+
+    def send_posts(self):
         pass
 
     def print_send_post(self):

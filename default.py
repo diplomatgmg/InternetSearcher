@@ -49,7 +49,13 @@ class Trans(Translator):
                 return super().translate(*args, **kwargs)
             except httpcore.ReadError:
                 if retries == 10:
-                    raise httpcore.ReadError('Возникла ошибка при переводе.')
+                    input(
+                        color(
+                            "Возникла ошибка при переводе. Для выхода нажмите Enter.",
+                            "red",
+                        )
+                    )
+                    raise httpcore.ReadError("Возникла ошибка при переводе.")
 
                 retries += 1
                 time.sleep(2)

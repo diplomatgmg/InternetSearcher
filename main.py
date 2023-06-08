@@ -3,8 +3,14 @@ from default import color, check_sites_connection
 from sites.china_daily import ChinaDaily
 from sites.dziennik_wschodni import DziennikWschodni
 from sites.khaleejtimes import KhaleejTimes
+from sites.lefigaro import Lefigaro
 
-SITES = [ChinaDaily(), DziennikWschodni(), KhaleejTimes(),]
+SITES = [
+    ChinaDaily,
+    DziennikWschodni,
+    KhaleejTimes,
+    Lefigaro,
+]
 
 
 def main(preview=True, old_keywords=None):

@@ -1,7 +1,6 @@
 import datetime
 import re
 
-import requests
 from bs4 import BeautifulSoup
 
 from default import translator
@@ -11,17 +10,10 @@ from sites.base import BaseParser
 class ChinaDaily(BaseParser):
     SITE_URL = "https://www.chinadaily.com.cn/"
 
-    def get_session(self):
-        session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
-        session.mount("https://", adapter)
-        return session
-        pass
-
     def start(self):
         self.get_categories_hrefs()
         self.get_subcategories_hrefs()
-        self.get_posts()
+        self.get_posts_hrefs()
         self.send_posts()
 
     def get_categories_hrefs(self) -> None | bool:
@@ -45,8 +37,8 @@ class ChinaDaily(BaseParser):
                     self.categories_hrefs.add(category_href)
 
     def get_subcategories_hrefs(self) -> None | bool:
-        for category in self.categories_hrefs:
-            page = self.check_connection(category)
+        for category_href in self.categories_hrefs:
+            page = self.check_connection(category_href)
 
             if not page:
                 return False
@@ -65,9 +57,9 @@ class ChinaDaily(BaseParser):
                         subcategory_href = "https://" + subcategory_match.group(0)
                         self.subcategories_hrefs.add(subcategory_href)
 
-    def get_posts(self):
-        for sub_category in self.subcategories_hrefs:
-            page = self.check_connection(sub_category)
+    def get_posts_hrefs(self):
+        for sub_category_href in self.subcategories_hrefs:
+            page = self.check_connection(sub_category_href)
 
             if not page:
                 return False
@@ -120,7 +112,7 @@ class ChinaDaily(BaseParser):
 
             parse_text = (header + " " + content_text).lower()
 
-            if any(keyword in parse_text for keyword in self.keywords):
+            if any(keyword in parse_text.split() for keyword in self.keywords):
                 if len(paragraphs) > 1:
                     first_paragraph = paragraphs[0].text.strip()
                     second_paragraph = paragraphs[1].text.strip()
@@ -146,8 +138,6 @@ class ChinaDaily(BaseParser):
                 self.print_send_post()
 
                 # TODO
-            else:
-                print(post_href)
 
 
 # send_telegram(to_send)

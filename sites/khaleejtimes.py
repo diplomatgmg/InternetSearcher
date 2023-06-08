@@ -1,7 +1,6 @@
 import re
 from datetime import datetime, timedelta
 
-import requests
 from bs4 import BeautifulSoup, Comment
 
 from default import translator
@@ -10,13 +9,6 @@ from sites.base import BaseParser
 
 class KhaleejTimes(BaseParser):
     SITE_URL = "https://www.khaleejtimes.com"
-
-    def get_session(self):
-        session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
-        session.mount("https://", adapter)
-        return session
-        pass
 
     def start(self):
         self.get_categories()
@@ -95,7 +87,7 @@ class KhaleejTimes(BaseParser):
 
             parse_text = " ".join(parse_text_raw.replace("\n", " ").split())
 
-            if any(keyword in parse_text for keyword in self.keywords):
+            if any(keyword in parse_text.split() for keyword in self.keywords):
                 header = soup.find("h1").text.strip()
                 subheader = soup.find("h3", class_="preamble-nf").text.strip()
                 paragraph = soup.find_all("p")[2].text

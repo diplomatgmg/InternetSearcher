@@ -1,6 +1,5 @@
 from datetime import timedelta, datetime
 
-import requests
 from bs4 import BeautifulSoup
 
 from default import translator
@@ -8,17 +7,12 @@ from sites.base import BaseParser
 
 
 class DziennikWschodni(BaseParser):
+    SITE_URL = "https://www.dziennikwschodni.pl"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.SITE_URL = self.get_site_url()
         self.pages_hrefs = {self.SITE_URL}
-
-    def get_session(self):
-        session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
-        session.mount("https://", adapter)
-        return session
-        pass
 
     @staticmethod
     def get_main_page():
@@ -32,11 +26,11 @@ class DziennikWschodni(BaseParser):
         return url
 
     def start(self):
-        self.get_pages()
-        self.get_posts()
+        self.get_pages_hrefs()
+        self.get_posts_hrefs()
         self.send_posts()
 
-    def get_pages(self):
+    def get_pages_hrefs(self):
         current_page = self.SITE_URL
 
         while True:
@@ -57,7 +51,7 @@ class DziennikWschodni(BaseParser):
             current_page = next_page
             self.pages_hrefs.add(current_page)
 
-    def get_posts(self):
+    def get_posts_hrefs(self):
         for page_href in self.pages_hrefs:
             page = self.check_connection(page_href)
 
@@ -93,7 +87,7 @@ class DziennikWschodni(BaseParser):
             content = " ".join(content_raw.text.split())
             parse_text = (header + " " + content).lower()
 
-            if any(keyword in parse_text for keyword in self.keywords):
+            if any(keyword in parse_text.split() for keyword in self.keywords):
                 subheader = soup.find("p", class_="single-news__lead").text.strip()
 
                 div_paragraph = soup.find("div", class_="single-news__text-content")
