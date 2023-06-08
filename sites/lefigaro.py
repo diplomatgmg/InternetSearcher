@@ -67,7 +67,7 @@ class Lefigaro(BaseParser):
                 )
                 post_time = datetime.strptime(post_raw_time, "%Y-%m-%d %H:%M:%S")
 
-                if post_time <= self.time_interval:
+                if post_time < self.time_interval:
                     break
 
                 post_href = post.find("a", class_="fig-flash__data")["href"]
@@ -110,3 +110,10 @@ class Lefigaro(BaseParser):
                 self.print_send_post()
 
                 # todo
+
+
+def test():
+    keywords = [chr(letter) for letter in range(ord("a"), ord("z") + 1)]
+    time = 1 + 1
+    obj = Lefigaro(keywords, time)
+    obj.start()

@@ -67,7 +67,7 @@ class DziennikWschodni(BaseParser):
 
                 post_time = datetime.strptime(datetime_obj, "%d.%m.%Y %H:%M")
 
-                if post_time <= self.time_interval:
+                if post_time < self.time_interval:
                     break
 
                 post_href = self.get_main_page() + post.find("a", href=True)["href"]
@@ -97,9 +97,7 @@ class DziennikWschodni(BaseParser):
                     first_paragraph = div_paragraph.find("div")
 
                 first_paragraph = first_paragraph.text.strip()
-                to_translate = (
-                    f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{first_paragraph}"
-                )
+                to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{first_paragraph}"
                 self.num_sent_posts += 1
                 to_send = translator.translate(to_translate, dest="ru").text
                 to_send += f"\n\n{post_href}"
@@ -107,3 +105,12 @@ class DziennikWschodni(BaseParser):
 
                 # TODO
                 # send_telegram(to_send)
+
+
+def test():
+    keywords = [chr(letter) for letter in range(ord("a"), ord("z") + 1)]
+    time = 1 + 1
+    obj = DziennikWschodni(keywords, time)
+    obj.start()
+
+

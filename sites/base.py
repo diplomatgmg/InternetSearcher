@@ -39,7 +39,7 @@ class BaseParser(ABC):
 
         while True:
             try:
-                response = session.get(page or cls.SITE_URL, timeout=10)
+                response = session.get(page or cls.SITE_URL, timeout=20)
 
                 if response.status_code != HTTPStatus.OK:
                     bad_request_message(cls.__name__)
