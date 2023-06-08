@@ -25,16 +25,15 @@ class ChinaDaily(BaseParser):
         soup = BeautifulSoup(page.content, "html.parser")
         nav_bar = soup.find("div", class_="topNav")
 
-        if nav_bar:
-            regex = r"www\.chinadaily\.com\.cn\/\w+"
-            categories = nav_bar.find_all("a", href=True)
+        regex = r"www\.chinadaily\.com\.cn\/\w+"
+        categories = nav_bar.find_all("a", href=True)
 
-            for category in categories:
-                category_match = re.search(regex, category["href"])
+        for category in categories:
+            category_match = re.search(regex, category["href"])
 
-                if category_match:
-                    category_href = "https://" + category_match.group(0)
-                    self.categories_hrefs.add(category_href)
+            if category_match:
+                category_href = "https://" + category_match.group(0)
+                self.categories_hrefs.add(category_href)
 
     def get_subcategories_hrefs(self) -> None | bool:
         for category_href in self.categories_hrefs:
@@ -71,7 +70,7 @@ class ChinaDaily(BaseParser):
                 str_time = post.find("span", class_="tw3_01_2_t").find("b").text
                 post_time = datetime.datetime.strptime(str_time, "%Y-%m-%d %H:%M")
 
-                if post_time <= self.time_interval:
+                if post_time < self.time_interval:
                     break
 
                 post_raw_href = post.find("a", href=True)["href"]
@@ -130,14 +129,20 @@ class ChinaDaily(BaseParser):
                 )
 
                 self.num_sent_posts += 1
-
                 to_send = translator.translate(to_translate, dest="ru").text
-
                 to_send += f"\n\n{post_href}"
-
                 self.print_send_post()
+                print(post_href)
 
                 # TODO
+                # send_telegram(to_send)
 
 
-# send_telegram(to_send)
+def test():
+    keywords = [chr(letter) for letter in range(ord("a"), ord("z") + 1)]
+    time = 1 - 5
+    obj = ChinaDaily(keywords, time)
+    obj.start()
+
+
+test()

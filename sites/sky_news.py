@@ -66,7 +66,7 @@ class SkyNews(BaseParser):
             post_raw_time = post_raw_time.text.strip()
             post_time = self.convert_time(post_raw_time)
 
-            if post_time <= self.time_interval:
+            if post_time < self.time_interval:
                 continue
 
             content_raw = soup.find("div", class_="section-wrap")
@@ -78,13 +78,11 @@ class SkyNews(BaseParser):
                 paragraph = content_raw.find("div", class_="sdc-article-body") or ""
 
                 if paragraph:
-                    paragraph = paragraph.find("p") or ''
+                    paragraph = paragraph.find("p") or ""
                     if paragraph:
                         paragraph = paragraph.text.strip()
 
-                to_translate = (
-                    f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
-                )
+                to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
                 self.num_sent_posts += 1
                 to_send = translator.translate(to_translate, dest="ru").text
                 to_send += f"\n\n{post_href}"
@@ -99,3 +97,8 @@ class SkyNews(BaseParser):
         return post_time
 
 
+def test():
+    keywords = [chr(letter) for letter in range(ord("a"), ord("z") + 1)]
+    time = 1 + 2
+    obj = SkyNews(keywords, time)
+    obj.start()

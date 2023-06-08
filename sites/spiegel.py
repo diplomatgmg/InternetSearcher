@@ -1,3 +1,6 @@
+import re
+from datetime import datetime
+
 from bs4 import BeautifulSoup
 
 from default import translator
@@ -33,8 +36,26 @@ class Spiegel(BaseParser):
             sections = soup.find_all("section", class_="z-10 w-full")[:3]
 
             for section in sections:
-                posts = section.find_all("h2")[1:]
+                day_raw = section.find("h2").text
+                day_regex = r"\w+, (\d{1,2})\. \w+ \d{4}"
+                day = int(re.search(day_regex, day_raw).group(1))
+                posts = section.find_all("article")
                 for post in posts:
+                    post_raw_time = re.search("(\d\d)[.](\d\d) Uhr", post.text)
+
+                    hours = int(post_raw_time.group(1))
+                    minute = int(post_raw_time.group(2))
+
+                    today = datetime.now()
+                    year = today.year
+                    month = today.month
+                    post_time = datetime(
+                        year=year, month=month, day=day, hour=hours, minute=minute
+                    )
+
+                    if post_time < self.time_interval:
+                        continue
+
                     premium_page = post.find(
                         "span", {"data-contains-flags": "Spplus-paid"}
                     )
@@ -94,5 +115,13 @@ class Spiegel(BaseParser):
                 self.num_sent_posts += 1
                 to_send = translator.translate(to_translate, dest="ru").text
                 to_send += f"\n\n{post_href}"
-
                 self.print_send_post()
+
+
+def test():
+    keywords = [chr(letter) for letter in range(ord("a"), ord("z") + 1)]
+    time = 1 + 1
+    obj = Spiegel(keywords, time)
+    obj.start()
+
+

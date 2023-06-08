@@ -46,7 +46,7 @@ class KhaleejTimes(BaseParser):
                 name_time = str_time.group(2)
                 post_time = self.parse_str_time(num_time, name_time)
 
-                if not post_time or post_time <= self.time_interval:
+                if not post_time or post_time < self.time_interval:
                     continue
 
                 page_href = post_div.find("h2", class_="post-title").find("a")["href"]
@@ -82,6 +82,17 @@ class KhaleejTimes(BaseParser):
             if not parse_text_raw:
                 continue
 
+            post_raw_time = (
+                parse_text_raw.find("div", class_="article-top-author-nw-nf-right")
+                .find("p")
+                .text.strip()
+            )
+
+            post_time = self.get_time_from_string(post_raw_time)
+
+            if post_time < self.time_interval:
+                continue
+
             parse_text_raw = parse_text_raw.text.lower()
 
             parse_text = " ".join(parse_text_raw.replace("\n", " ").split())
@@ -102,3 +113,17 @@ class KhaleejTimes(BaseParser):
 
                 # TODO
                 # send_telegram(to_send)
+
+    def get_time_from_string(self, string: str):
+        str_time = string.split(maxsplit=1)[1]
+        post_time = datetime.strptime(str_time, "%a %d %b %Y, %H:%M %p")
+        return post_time
+
+
+def test():
+    keywords = [chr(letter) for letter in range(ord("a"), ord("z") + 1)]
+    time = 1
+    obj = KhaleejTimes(keywords, time)
+    obj.start()
+
+
