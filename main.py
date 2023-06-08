@@ -5,14 +5,16 @@ from sites.dziennik_wschodni import DziennikWschodni
 from sites.khaleejtimes import KhaleejTimes
 from sites.lefigaro import Lefigaro
 from sites.sky_news import SkyNews
+from sites.spiegel import Spiegel
 
-SITES = [
+SITES = {
     ChinaDaily,
     DziennikWschodni,
     KhaleejTimes,
     Lefigaro,
     SkyNews,
-]
+    Spiegel,
+}
 
 
 def main(preview=True, old_keywords=None):

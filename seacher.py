@@ -8,7 +8,7 @@ from start_parsers import (
     start_dziennik_wschodni,
     start_khaleej_times,
     start_lefigaro,
-    start_sky_news,
+    start_sky_news, start_spiegel,
 )
 
 # TODO
@@ -75,8 +75,7 @@ def search(keywords: list):
     en_keywords = translate_keywords(keywords, "en")
     pl_keywords = translate_keywords(keywords, "pl")
     fr_keywords = translate_keywords(keywords, "fr")
-
-    # de_keywords = translate_keywords(keywords, "de")
+    de_keywords = translate_keywords(keywords, "de")
 
     china_daily_thread = Thread(
         target=start_china_daily, args=(en_keywords, time_interval)
@@ -89,9 +88,11 @@ def search(keywords: list):
     )
     lefigaro_thread = Thread(target=start_lefigaro, args=(fr_keywords, time_interval))
     sky_news_thread = Thread(target=start_sky_news, args=(en_keywords, time_interval))
+    spiegel_thread = Thread(target=start_spiegel, args=(de_keywords, time_interval))
 
     china_daily_thread.start()
     dziennik_wschodni_thread.start()
     khaleej_times_thread.start()
     lefigaro_thread.start()
     sky_news_thread.start()
+    spiegel_thread.start()

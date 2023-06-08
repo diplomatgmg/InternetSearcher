@@ -7,6 +7,7 @@ from sites.dziennik_wschodni import DziennikWschodni
 from sites.khaleejtimes import KhaleejTimes
 from sites.lefigaro import Lefigaro
 from sites.sky_news import SkyNews
+from sites.spiegel import Spiegel
 
 
 def start_with_logger(class_object):
@@ -73,3 +74,11 @@ def start_sky_news(keywords: list, time_interval: int):
 
     if status:
         start_with_logger(sky_news)
+
+
+def start_spiegel(keywords: list, time_interval: int):
+    spiegel = Spiegel(keywords, time_interval)
+    status = spiegel.check_connection()
+
+    if status:
+        start_with_logger(spiegel)
