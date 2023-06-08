@@ -81,9 +81,7 @@ class Lefigaro(BaseParser):
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-
             content_raw = soup.find("article")
-
             parse_text = " ".join(content_raw.text.split()).lower()
 
             if any(keyword in parse_text.split() for keyword in self.keywords):
@@ -96,6 +94,7 @@ class Lefigaro(BaseParser):
                     paragraph = paragraphs[0].text.strip()
                 else:
                     subheader = paragraphs[0].text.strip()
+
                     if len(paragraphs) >= 2:
                         paragraph = paragraphs[1].text.strip()
                     else:
@@ -105,13 +104,9 @@ class Lefigaro(BaseParser):
                     paragraph = paragraphs[2].text.strip()
 
                 to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
-
                 self.num_sent_posts += 1
-
                 to_send = translator.translate(to_translate, dest="ru").text
-
                 to_send += f"\n\n{post_href}"
-
                 self.print_send_post()
 
                 # todo

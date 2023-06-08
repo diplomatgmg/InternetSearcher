@@ -6,6 +6,7 @@ from sites.china_daily import ChinaDaily
 from sites.dziennik_wschodni import DziennikWschodni
 from sites.khaleejtimes import KhaleejTimes
 from sites.lefigaro import Lefigaro
+from sites.sky_news import SkyNews
 
 
 def start_with_logger(class_object):
@@ -59,8 +60,16 @@ def start_khaleej_times(keywords: list, time_interval: int):
 
 
 def start_lefigaro(keywords: list, time_interval: int):
-    khaleej_times = Lefigaro(keywords, time_interval)
-    status = khaleej_times.check_connection()
+    lefigaro = Lefigaro(keywords, time_interval)
+    status = lefigaro.check_connection()
 
     if status:
-        start_with_logger(khaleej_times)
+        start_with_logger(lefigaro)
+
+
+def start_sky_news(keywords: list, time_interval: int):
+    sky_news = SkyNews(keywords, time_interval)
+    status = sky_news.check_connection()
+
+    if status:
+        start_with_logger(sky_news)

@@ -1,5 +1,5 @@
 import time
-from abc import ABC, abstractmethod
+from abc import ABC
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
@@ -15,7 +15,6 @@ class BaseParser(ABC):
     def __init__(self, keywords: list = None, time_interval: int = False) -> None:
         self.keywords = keywords
         self.time_interval = datetime.now() - timedelta(hours=time_interval)
-
         self.categories_hrefs = set()
         self.subcategories_hrefs = set()
         self.pages_hrefs = set()
@@ -28,6 +27,7 @@ class BaseParser(ABC):
         adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
         session.mount("https://", adapter)
         cls.session = session
+
         return cls.session
 
     @classmethod
@@ -36,6 +36,7 @@ class BaseParser(ABC):
     ) -> requests.Response | bool:
         retries = 0
         session = cls.session or cls.get_session()
+
         while True:
             try:
                 response = session.get(page or cls.SITE_URL, timeout=10)
@@ -57,23 +58,25 @@ class BaseParser(ABC):
                         f"[{color(cls.__name__, 'cyan')}] "
                         f"{color('не ответило.', 'red')}"
                     )
+
                     return False
+
                 print(
                     f"{color('Издание', 'red')} "
                     f"[{color(cls.__name__, 'cyan')}] "
                     f"{color('не отвечает. Идет повторное подключение...', 'red')}"
                 )
                 retries += 1
-                time.sleep(1)
+                time.sleep(retries)
 
     def get_count_sent_posts(self):
         class_name = color(f"[{self.__class__.__name__}]", "cyan", "bold")
         sent = color(
             f"- Отправлено {self.num_sent_posts}/{len(self.posts_hrefs)}", "orange"
         )
+
         return f"{class_name} {sent}"
 
-    @abstractmethod
     def start(self):
         pass
 

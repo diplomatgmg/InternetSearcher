@@ -34,10 +34,9 @@ class KhaleejTimes(BaseParser):
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-
             posts_divs = soup.find_all("article", class_="post")
-
             time_pattern = r"(\d) (\w+) (\w+)"
+
             for post_div in posts_divs:
                 str_time_raw = str(
                     post_div(text=lambda text: isinstance(text, Comment))[0]
@@ -75,8 +74,8 @@ class KhaleejTimes(BaseParser):
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-
             parse_text_raw = soup.find("div", class_="article-paragraph-wrapper")
+
             if not parse_text_raw:
                 parse_text_raw = soup.find("div", class_="article-wrapper")
 
@@ -99,45 +98,7 @@ class KhaleejTimes(BaseParser):
                 self.num_sent_posts += 1
                 to_send = translator.translate(to_translate, dest="ru").text
                 to_send += f"\n\n{post_href}"
-
                 self.print_send_post()
 
                 # TODO
                 # send_telegram(to_send)
-
-    @staticmethod
-    def convert_time(time: str):
-        regex = r"(\w{3}) (\d{1,2}) (\w{3}) (\d{4}), (\d{1,2}):(\d{2}) ([AP]M)"
-        match = re.search(regex, time)
-
-        day = match.group(2)
-        month = match.group(3)
-        year = match.group(4)
-        hour = int(match.group(5))
-        minute = int(match.group(6))
-        am_pm = match.group(7)
-
-        month_dict = {
-            "Jan": 1,
-            "Feb": 2,
-            "Mar": 3,
-            "Apr": 4,
-            "May": 5,
-            "Jun": 6,
-            "Jul": 7,
-            "Aug": 8,
-            "Sep": 9,
-            "Oct": 10,
-            "Nov": 11,
-            "Dec": 12,
-        }
-
-        month_number = month_dict[month]
-
-        if am_pm == "PM" and hour != 12:
-            hour += 12
-        elif am_pm == "AM" and hour == 12:
-            hour = 0
-
-        date_time = datetime(int(year), month_number, int(day), hour, minute)
-        return date_time

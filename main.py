@@ -4,12 +4,14 @@ from sites.china_daily import ChinaDaily
 from sites.dziennik_wschodni import DziennikWschodni
 from sites.khaleejtimes import KhaleejTimes
 from sites.lefigaro import Lefigaro
+from sites.sky_news import SkyNews
 
 SITES = [
     ChinaDaily,
     DziennikWschodni,
     KhaleejTimes,
     Lefigaro,
+    SkyNews,
 ]
 
 
@@ -29,12 +31,12 @@ def main(preview=True, old_keywords=None):
             return seacher.search(old_keywords)
 
     if not keywords:
-        color1 = color("+", "cyan")
-        color2 = color("путин+сказал", "cyan")
+        phrase1 = color("+", "cyan")
+        phrase2 = color("ядерное+оружие", "cyan")
         keywords = input(
             "\nВведите через пробел ключевые слова для поиска.\n"
-            f'Для поиска двух слов используйте "{color1}". '
-            f'Например: "{color2}"\n'
+            f'Для поиска двух слов используйте "{phrase1}". '
+            f'Например: "{phrase2}"\n'
         )
 
     keywords = combine_words(keywords)
