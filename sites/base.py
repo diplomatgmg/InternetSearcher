@@ -19,7 +19,6 @@ class BaseParser(ABC):
         self.subcategories_hrefs = set()
         self.pages_hrefs = set()
         self.posts_hrefs = set()
-        self.num_sent_posts = 0
 
     @classmethod
     def get_session(cls):
@@ -49,9 +48,7 @@ class BaseParser(ABC):
 
                 return response
 
-            except (
-                requests.exceptions.ConnectionError or requests.exceptions.ReadTimeout
-            ):
+            except:
                 if retries == 10:
                     print(
                         f"{color('Издание', 'red')} "
@@ -83,6 +80,9 @@ class BaseParser(ABC):
     def get_categories_hrefs(self):
         pass
 
+    def get_subcategories_hrefs(self):
+        pass
+
     def get_pages_hrefs(self):
         pass
 
@@ -96,5 +96,4 @@ class BaseParser(ABC):
         print(
             f"{color(f'[{self.__class__.__name__}]', 'cyan', 'bold')} "
             f"{color('Новость подходит!', 'green')} "
-            f"{color(f'Отправлено {self.num_sent_posts}/{len(self.posts_hrefs)}')}"
         )

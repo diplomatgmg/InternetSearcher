@@ -98,7 +98,6 @@ class DziennikWschodni(BaseParser):
 
                 first_paragraph = first_paragraph.text.strip()
                 to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{first_paragraph}"
-                self.num_sent_posts += 1
                 to_send = translator.translate(to_translate, dest="ru").text
                 to_send += f"\n\n{post_href}"
                 self.print_send_post()

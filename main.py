@@ -6,6 +6,7 @@ from sites.khaleejtimes import KhaleejTimes
 from sites.lefigaro import Lefigaro
 from sites.sky_news import SkyNews
 from sites.spiegel import Spiegel
+from sites.theguadrian import TheGuardian
 
 SITES = {
     ChinaDaily,
@@ -14,12 +15,11 @@ SITES = {
     Lefigaro,
     SkyNews,
     Spiegel,
+TheGuardian,
 }
-
 
 def main(preview=True, old_keywords=None):
     keywords = None
-
     if preview:
         print(color("Устанавливается соединение с сайтами...", "purple"))
         check_sites_connection(SITES)

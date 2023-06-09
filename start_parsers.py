@@ -8,6 +8,7 @@ from sites.khaleejtimes import KhaleejTimes
 from sites.lefigaro import Lefigaro
 from sites.sky_news import SkyNews
 from sites.spiegel import Spiegel
+from sites.theguadrian import TheGuardian
 
 
 def start_with_logger(class_object):
@@ -25,7 +26,7 @@ def start_with_logger(class_object):
         )
         logging.basicConfig(
             level=logging.ERROR,
-            filename=f"{class_object.__class__.__name__}.log",
+            filename=f"errors.log",
             filemode="w",
             format="%(asctime)s %(levelname)s %(message)s",
         )
@@ -82,3 +83,11 @@ def start_spiegel(keywords: list, time_interval: int):
 
     if status:
         start_with_logger(spiegel)
+
+
+def start_theguardian(keywords: list, time_interval: int):
+    theguardian = TheGuardian(keywords, time_interval + 3)
+    status = theguardian.check_connection()
+
+    if status:
+        start_with_logger(theguardian)

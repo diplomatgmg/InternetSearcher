@@ -128,7 +128,6 @@ class ChinaDaily(BaseParser):
                     f"{second_paragraph}"
                 )
 
-                self.num_sent_posts += 1
                 to_send = translator.translate(to_translate, dest="ru").text
                 to_send += f"\n\n{post_href}"
                 self.print_send_post()
@@ -145,4 +144,3 @@ def test():
     obj.start()
 
 
-test()
