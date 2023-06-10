@@ -1,1 +1,1 @@
-pyinstaller -F -i "E:\1 Python\internet searcher\icon.ico" "E:\1 Python\internet searcher\internet searcher\English Searcher.py"
+pyinstaller -F -i "D:\InternetSearcher\icon.ico" "D:\InternetSearcher\main.py"
