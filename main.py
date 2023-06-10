@@ -1,5 +1,6 @@
 import seacher
 from default import check_sites_connection
+from openai_gpt import get_openai_api_key
 from sites.china_daily import ChinaDaily
 from sites.dziennik_wschodni import DziennikWschodni
 from sites.khaleejtimes import KhaleejTimes
@@ -58,4 +59,8 @@ def combine_words(words: str):
 
 
 if __name__ == "__main__":
+    key = get_openai_api_key()
+    if not key:
+        exit()
+
     main()

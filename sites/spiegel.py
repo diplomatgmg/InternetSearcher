@@ -110,17 +110,17 @@ class Spiegel(BaseParser):
 
             parse_text = f"{header} {subheader} {parse_paragraphs}".lower()
 
-            if any(keyword in parse_text.split() for keyword in self.keywords):
-                paragraph = " ".join(paragraphs[0].text.split())
-                to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
-                to_send = translate_chat_gpt(to_translate)
-                to_send += f"\n\n{post_href}"
-                send_telegram(to_send)
-                self.print_send_post()
+            # if any(keyword in parse_text.split() for keyword in self.keywords):
+            paragraph = " ".join(paragraphs[0].text.split())
+            to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
+            to_send = translate_chat_gpt(to_translate)
+            to_send += f"\n\n{post_href}"
+            send_telegram(to_send)
+            self.print_send_post()
 
 
 def test():
     keywords = [chr(letter) for letter in range(ord("a"), ord("z") + 1)]
-    time = 1 + 1
+    time = 1 + 24
     obj = Spiegel(keywords, time)
     obj.start()

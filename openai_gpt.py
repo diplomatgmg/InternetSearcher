@@ -2,7 +2,17 @@ import time
 
 import openai
 
-openai.api_key = "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"
+
+def get_openai_api_key():
+    try:
+        with open("openai_key", "r") as openai_key:
+            return openai_key.read()
+    except FileNotFoundError:
+        with open("openai_key", "w"):
+            pass
+
+
+openai.api_key = get_openai_api_key()
 
 
 def translate_chat_gpt(message: str):
@@ -22,3 +32,10 @@ def translate_chat_gpt(message: str):
             return translated
         except openai.error.RateLimitError:
             time.sleep(30)
+        except openai.error.AuthenticationError:
+            print(
+                "Ошибка при получении токена для ChatGPT. "
+                "Дальнейшая работа программы невозможна. "
+                "Обратитесь к программисту."
+            )
+            time.sleep(10)
