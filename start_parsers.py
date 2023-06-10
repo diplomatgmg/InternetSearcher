@@ -9,12 +9,12 @@ from sites.lefigaro import Lefigaro
 from sites.sky_news import SkyNews
 from sites.spiegel import Spiegel
 from sites.theguadrian import TheGuardian
+from sites.usa_today import UsaToday
 
 
 def start_with_logger(class_object):
     try:
         class_object.start()
-        print(class_object.get_count_sent_posts())
     except:
         print(
             color(
@@ -91,3 +91,11 @@ def start_theguardian(keywords: list, time_interval: int):
 
     if status:
         start_with_logger(theguardian)
+
+
+def start_usa_today(keywords: list, time_interval: int):
+    usa_today = UsaToday(keywords, time_interval + 7)
+    status = usa_today.check_connection()
+
+    if status:
+        start_with_logger(usa_today)

@@ -11,6 +11,7 @@ from start_parsers import (
     start_sky_news,
     start_spiegel,
     start_theguardian,
+    start_usa_today,
 )
 
 # TODO
@@ -94,6 +95,7 @@ def search(keywords: list):
     theguardian_thread = Thread(
         target=start_theguardian, args=(en_keywords, time_interval)
     )
+    usa_today_thread = Thread(target=start_usa_today, args=(en_keywords, time_interval))
 
     china_daily_thread.start()
     dziennik_wschodni_thread.start()
@@ -102,3 +104,4 @@ def search(keywords: list):
     sky_news_thread.start()
     spiegel_thread.start()
     theguardian_thread.start()
+    usa_today_thread.start()

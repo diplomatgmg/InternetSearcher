@@ -66,14 +66,6 @@ class BaseParser(ABC):
                 retries += 1
                 time.sleep(retries)
 
-    def get_count_sent_posts(self):
-        class_name = color(f"[{self.__class__.__name__}]", "cyan", "bold")
-        sent = color(
-            f"- Отправлено {self.num_sent_posts}/{len(self.posts_hrefs)}", "orange"
-        )
-
-        return f"{class_name} {sent}"
-
     def start(self):
         pass
 
@@ -81,9 +73,6 @@ class BaseParser(ABC):
         pass
 
     def get_subcategories_hrefs(self):
-        pass
-
-    def get_pages_hrefs(self):
         pass
 
     def get_posts_hrefs(self):

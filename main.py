@@ -7,6 +7,7 @@ from sites.lefigaro import Lefigaro
 from sites.sky_news import SkyNews
 from sites.spiegel import Spiegel
 from sites.theguadrian import TheGuardian
+from sites.usa_today import UsaToday
 
 SITES = {
     ChinaDaily,
@@ -15,8 +16,10 @@ SITES = {
     Lefigaro,
     SkyNews,
     Spiegel,
-TheGuardian,
+    TheGuardian,
+    UsaToday,
 }
+
 
 def main(preview=True, old_keywords=None):
     keywords = None

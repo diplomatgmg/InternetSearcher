@@ -34,11 +34,6 @@ class TheGuardian(BaseParser):
 
     def send_posts(self):
         for subcategory_href in self.subcategories_hrefs:
-            # if sub_category_href.startswith("https://www.theguardian.com/mobile"):
-            #     continue
-            # elif not sub_category_href.startswith("https://www.theguardian.com"):
-            #     continue
-
             page = self.check_connection(subcategory_href)
 
             if not page:
@@ -121,5 +116,3 @@ def test():
     time = 1 + 3
     obj = TheGuardian(keywords, time)
     obj.start()
-
-
