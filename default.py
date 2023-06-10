@@ -1,26 +1,7 @@
 import time
 from threading import Thread
 
-import httpcore
 from googletrans import Translator
-
-
-class Color:
-    PURPLE = "\033[95m"
-    CYAN = "\033[96m"
-    GREEN = "\033[92m"
-    ORANGE = "\033[94m"
-    RED = "\033[91m"
-    BOLD = "\033[1m"
-    RESET = "\033[0m"
-
-    def color(self, message, *colours):
-        result = ""
-
-        for colour in colours:
-            result += getattr(self, colour.upper())
-
-        return f"{result}{message}{self.RESET}"
 
 
 def check_sites_connection(sites):
@@ -35,17 +16,11 @@ def check_sites_connection(sites):
 
 
 def bad_request_message(name_site):
-    print(
-        color(name_site, "red", "bold"),
-        color("- Потеряно соединение. Обратитесь к программисту.", "green"),
-    )
+    print(name_site, "- Потеряно соединение. Обратитесь к программисту.")
 
 
 def good_request_message(name_site):
-    print(
-        color(name_site, "purple", "bold"),
-        color("- Соединение установлено.", "green"),
-    )
+    print(name_site, "- Соединение установлено.")
 
 
 class Trans(Translator):
@@ -57,10 +32,7 @@ class Trans(Translator):
             except:
                 if retries == 10:
                     input(
-                        color(
-                            "Возникла ошибка при переводе...\n",
-                            "red",
-                        )
+                        "Возникла ошибка при переводе...\n",
                     )
 
                 retries += 1
@@ -68,5 +40,3 @@ class Trans(Translator):
 
 
 translator = Trans()
-
-color = Color().color

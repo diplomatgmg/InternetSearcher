@@ -5,7 +5,7 @@ from http import HTTPStatus
 
 import requests
 
-from default import bad_request_message, good_request_message, color
+from default import bad_request_message, good_request_message
 
 
 class BaseParser(ABC):
@@ -50,19 +50,14 @@ class BaseParser(ABC):
 
             except:
                 if retries == 10:
-                    print(
-                        f"{color('Издание', 'red')} "
-                        f"[{color(cls.__name__, 'cyan')}] "
-                        f"{color('не ответило.', 'red')}"
-                    )
+                    print(f"Издание {cls.__name__} не ответило.")
 
                     return False
 
                 print(
-                    f"{color('Издание', 'red')} "
-                    f"[{color(cls.__name__, 'cyan')}] "
-                    f"{color('не отвечает. Идет повторное подключение...', 'red')}"
+                    f"Издание {cls.__name__} не отвечает. Идет повторное подключение..."
                 )
+
                 retries += 1
                 time.sleep(retries)
 
@@ -82,7 +77,4 @@ class BaseParser(ABC):
         pass
 
     def print_send_post(self):
-        print(
-            f"{color(f'[{self.__class__.__name__}]', 'cyan', 'bold')} "
-            f"{color('Новость подходит!', 'green')} "
-        )
+        print(f"[{self.__class__.__name__}] Новость подходит!")

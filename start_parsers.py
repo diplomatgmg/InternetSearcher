@@ -1,7 +1,6 @@
 import logging
 
 import seacher
-from default import color
 from sites.china_daily import ChinaDaily
 from sites.dziennik_wschodni import DziennikWschodni
 from sites.khaleejtimes import KhaleejTimes
@@ -17,12 +16,8 @@ def start_with_logger(class_object):
         class_object.start()
     except:
         print(
-            color(
-                f"Ошибка при работе с [{class_object.__class__.__name__}]. "
-                f"Логи сохранены в файл под названием errors.log",
-                "red",
-                "bold",
-            )
+            f"Ошибка при работе с [{class_object.__class__.__name__}]. "
+            f"Логи сохранены в файл под названием errors.log",
         )
         logging.basicConfig(
             level=logging.ERROR,
@@ -31,10 +26,10 @@ def start_with_logger(class_object):
             format="%(asctime)s %(levelname)s %(message)s",
         )
 
-        logging.error(
-            f"Ошибка при работе с [{class_object.__class__.__name__}]. Keywords: {seacher.global_keywords}",
-            exc_info=True,
-        )
+    logging.error(
+        f"Ошибка при работе с [{class_object.__class__.__name__}]. Keywords: {seacher.global_keywords}",
+        exc_info=True,
+    )
 
 
 def start_china_daily(keywords: list, time_interval: int):

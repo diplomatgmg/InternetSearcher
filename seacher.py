@@ -1,7 +1,6 @@
 from threading import Thread
 
 import main
-from default import color
 from default import translator
 from start_parsers import (
     start_china_daily,
@@ -35,19 +34,19 @@ def get_correct_num(min_num: int, max_num: int, blank=False) -> int | str:
                 return result
         print(
             f"Убедитесь, что вводимое число находится в промежутке "
-            f"от {color(min_num, 'cyan')} до {color(max_num, 'cyan')}.Введите еще раз:"
+            f"от {min_num} до {max_num}.Введите еще раз:"
         )
 
 
 def print_hours_message(hours: int) -> None:
     if hours == 1:
-        print(f"Выполняется поиск новостей за последний {color('час', 'cyan')}")
+        print(f"\nВыполняется поиск новостей за последний {'час'}")
     elif hours % 10 == 1 and hours % 100 != 11:
-        print(f"Выполняется поиск новостей за последний {color(hours, 'cyan')} час")
+        print(f"\nВыполняется поиск новостей за последний {hours} час")
     elif hours % 10 in (2, 3, 4) and hours % 100 not in (12, 13, 14):
-        print(f"Выполняется поиск новостей за последние {color(hours, 'cyan')} часа")
+        print(f"\nВыполняется поиск новостей за последние {hours} часа")
     else:
-        print(f"Выполняется поиск новостей за последние {color(hours, 'cyan')} часов")
+        print(f"\nВыполняется поиск новостей за последние {hours} часов")
 
 
 def translate_keywords(keywords: list, to_language: str) -> list:
@@ -59,14 +58,14 @@ def translate_keywords(keywords: list, to_language: str) -> list:
 def search(keywords: list):
     global global_keywords
     global_keywords = keywords
-    print(f"Ключевые слова: {color(str(keywords), 'cyan')}")
+    print(f"\nКлючевые слова: {str(keywords)}")
 
     min_num = 1
     max_num = 96
     print(
         f"За какое время искать? (в часах). "
-        f"От {color(min_num, 'cyan')} до {color(max_num, 'cyan')}. "
-        f"Ввести заново ключевые слова - {color('0', 'cyan')}."
+        f"От {min_num} до {max_num}. "
+        f"Ввести заново ключевые слова - 0."
     )
     time_interval = get_correct_num(min_num, max_num, blank=True)
 
@@ -115,4 +114,4 @@ def search(keywords: list):
     theguardian_thread.join()
     usa_today_thread.join()
 
-    input(color('\nПоиск новостей окончен.', 'green'))
+    input("\nПоиск новостей окончен.")
