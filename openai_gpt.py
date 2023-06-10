@@ -33,9 +33,8 @@ def translate_chat_gpt(message: str):
         except openai.error.RateLimitError:
             time.sleep(30)
         except openai.error.AuthenticationError:
-            print(
+            raise openai.error.AuthenticationError(
                 "Ошибка при получении токена для ChatGPT. "
                 "Дальнейшая работа программы невозможна. "
                 "Обратитесь к программисту."
             )
-            time.sleep(10)
