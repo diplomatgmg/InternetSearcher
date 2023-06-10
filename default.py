@@ -1,4 +1,5 @@
 import time
+from threading import Thread
 
 import httpcore
 from googletrans import Translator
@@ -24,7 +25,8 @@ class Color:
 
 def check_sites_connection(sites):
     for site in sites:
-        site.check_connection(printable=True)
+        obj = Thread(target=site.check_connection, kwargs={"printable": True})
+        obj.start()
 
 
 def bad_request_message(name_site):
