@@ -2,7 +2,8 @@ from datetime import timedelta, datetime
 
 from bs4 import BeautifulSoup
 
-from default import translator
+from openai_gpt import translate_chat_gpt
+from send_tg import send_telegram
 from sites.base import BaseParser
 
 
@@ -95,11 +96,16 @@ class DziennikWschodni(BaseParser):
 
                 if not first_paragraph:
                     first_paragraph = div_paragraph.find("div")
+                    if not first_paragraph:
+                        continue
 
                 first_paragraph = first_paragraph.text.strip()
-                to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{first_paragraph}"
-                to_send = translator.translate(to_translate, dest="ru").text
+                to_translate = (
+                    f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{first_paragraph}"
+                )
+                to_send = translate_chat_gpt(to_translate)
                 to_send += f"\n\n{post_href}"
+                send_telegram(to_send)
                 self.print_send_post()
 
                 # TODO
@@ -111,5 +117,3 @@ def test():
     time = 1 + 1
     obj = DziennikWschodni(keywords, time)
     obj.start()
-
-

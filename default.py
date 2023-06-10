@@ -24,9 +24,14 @@ class Color:
 
 
 def check_sites_connection(sites):
+    threads = []
     for site in sites:
         obj = Thread(target=site.check_connection, kwargs={"printable": True})
         obj.start()
+        threads.append(obj)
+
+    for thread in threads:
+        thread.join()
 
 
 def bad_request_message(name_site):
@@ -53,11 +58,10 @@ class Trans(Translator):
                 if retries == 10:
                     input(
                         color(
-                            "Возникла ошибка при переводе. Для выхода нажмите Enter.",
+                            "Возникла ошибка при переводе...\n",
                             "red",
                         )
                     )
-                    raise httpcore.ReadError("Возникла ошибка при переводе.")
 
                 retries += 1
                 time.sleep(retries)

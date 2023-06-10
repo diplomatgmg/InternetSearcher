@@ -53,7 +53,7 @@ def combine_words(words: str):
     result = []
 
     for word in words.split():
-        word = " ".join(word.split("="))
+        word = " ".join(word.split("+"))
         result.append(word)
 
     return result

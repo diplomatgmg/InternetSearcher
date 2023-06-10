@@ -2,7 +2,8 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 
-from default import translator
+from openai_gpt import translate_chat_gpt
+from send_tg import send_telegram
 from sites.base import BaseParser
 
 
@@ -68,7 +69,12 @@ class TheGuardian(BaseParser):
                 if post_time < self.time_interval:
                     continue
 
-                header = soup.find("h1").text.strip()
+                header = soup.find("h1")
+
+                if not header:
+                    continue
+
+                header = header.text.strip()
                 subheader = soup.find("div", {"data-gu-name": "standfirst"})
 
                 if not subheader:
@@ -89,7 +95,7 @@ class TheGuardian(BaseParser):
                 parse_text = (header + " " + subheader + "  " + content_text).lower()
 
                 if any(keyword in parse_text.split() for keyword in self.keywords):
-                    paragraph = content_raw.find("p")
+                    paragraph = content_raw.find("p").text.strip()
 
                     if not paragraph:
                         continue
@@ -97,10 +103,10 @@ class TheGuardian(BaseParser):
                     to_translate = (
                         f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
                     )
-                    to_send = translator.translate(to_translate, dest="ru").text
+                    to_send = translate_chat_gpt(to_translate)
                     to_send += f"\n\n{post_href}"
+                    send_telegram(to_send)
                     self.print_send_post()
-                    print(post_href)
 
     @staticmethod
     def get_post_time(post_raw_time):

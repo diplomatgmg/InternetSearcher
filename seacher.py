@@ -105,3 +105,14 @@ def search(keywords: list):
     spiegel_thread.start()
     theguardian_thread.start()
     usa_today_thread.start()
+
+    china_daily_thread.join()
+    dziennik_wschodni_thread.join()
+    khaleej_times_thread.join()
+    lefigaro_thread.join()
+    sky_news_thread.join()
+    spiegel_thread.join()
+    theguardian_thread.join()
+    usa_today_thread.join()
+
+    input(color('\nПоиск новостей окончен.', 'green'))

@@ -3,7 +3,8 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 
-from default import translator
+from openai_gpt import translate_chat_gpt
+from send_tg import send_telegram
 from sites.base import BaseParser
 
 
@@ -112,8 +113,9 @@ class Spiegel(BaseParser):
             if any(keyword in parse_text.split() for keyword in self.keywords):
                 paragraph = " ".join(paragraphs[0].text.split())
                 to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
-                to_send = translator.translate(to_translate, dest="ru").text
+                to_send = translate_chat_gpt(to_translate)
                 to_send += f"\n\n{post_href}"
+                send_telegram(to_send)
                 self.print_send_post()
 
 
@@ -122,5 +124,3 @@ def test():
     time = 1 + 1
     obj = Spiegel(keywords, time)
     obj.start()
-
-
