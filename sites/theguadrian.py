@@ -2,6 +2,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 
+from default import translator
 from openai_gpt import translate_chat_gpt
 from send_tg import send_telegram
 from sites.base import BaseParser
@@ -9,6 +10,7 @@ from sites.base import BaseParser
 
 class TheGuardian(BaseParser):
     SITE_URL = "https://www.theguardian.com"
+    language = 'en'
 
     def start(self):
         self.get_subcategories_hrefs()
@@ -29,7 +31,7 @@ class TheGuardian(BaseParser):
             subcategory_href = subcategory["href"]
             if subcategory_href.startswith("https://www.theguardian.com"):
                 if not subcategory_href.startswith(
-                    "https://www.theguardian.com/mobile"
+                        "https://www.theguardian.com/mobile"
                 ):
                     self.subcategories_hrefs.add(subcategory_href)
 
@@ -103,10 +105,17 @@ class TheGuardian(BaseParser):
                     to_translate = (
                         f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
                     )
-                    to_send = translate_chat_gpt(to_translate)
-                    to_send += f"\n\n{post_href}"
-                    send_telegram(to_send)
-                    self.print_send_post()
+                    if not self.is_test:
+                        to_send = translate_chat_gpt(to_translate)
+                        to_send += f"\n\n{post_href}"
+                        send_telegram(to_send)
+                        self.print_send_post()
+                    else:
+                        translated = translator.translate(header, dest='ru').text
+                        self.print_send_post()
+                        print(translated)
+                        print(post_href)
+                        print()
 
     @staticmethod
     def get_post_time(post_raw_time):

@@ -3,7 +3,9 @@ import time
 import openai
 
 
-def get_openai_api_key():
+def get_openai_api_key(is_test=False):
+    if is_test:
+        return True
     try:
         with open("openai_key", "r") as openai_key:
             return openai_key.read()

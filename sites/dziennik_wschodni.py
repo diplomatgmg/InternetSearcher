@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 
 from bs4 import BeautifulSoup
 
+from default import translator
 from openai_gpt import translate_chat_gpt
 from send_tg import send_telegram
 from sites.base import BaseParser
@@ -9,6 +10,7 @@ from sites.base import BaseParser
 
 class DziennikWschodni(BaseParser):
     SITE_URL = "https://www.dziennikwschodni.pl"
+    language = 'pl'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
@@ -103,13 +105,18 @@ class DziennikWschodni(BaseParser):
                 to_translate = (
                     f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{first_paragraph}"
                 )
-                to_send = translate_chat_gpt(to_translate)
-                to_send += f"\n\n{post_href}"
-                send_telegram(to_send)
-                self.print_send_post()
 
-                # TODO
-                # send_telegram(to_send)
+                if not self.is_test:
+                    to_send = translate_chat_gpt(to_translate)
+                    to_send += f"\n\n{post_href}"
+                    send_telegram(to_send)
+                    self.print_send_post()
+                else:
+                    translated = translator.translate(header, dest='ru').text
+                    self.print_send_post()
+                    print(translated)
+                    print(post_href)
+                    print()
 
 
 def test():

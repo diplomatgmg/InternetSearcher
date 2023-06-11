@@ -3,6 +3,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 
+from default import translator
 from openai_gpt import translate_chat_gpt
 from send_tg import send_telegram
 from sites.base import BaseParser
@@ -10,6 +11,7 @@ from sites.base import BaseParser
 
 class UsaToday(BaseParser):
     SITE_URL = "https://usatoday.com"
+    language = 'en'
 
     def start(self):
         self.get_categories_hrefs()
@@ -133,17 +135,25 @@ class UsaToday(BaseParser):
                 paragraph = paragraphs[1].text.strip()
 
                 to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
-                to_send = translate_chat_gpt(to_translate)
-                to_send += f"\n\n{post_href}"
-                send_telegram(to_send)
-                self.print_send_post()
+
+                if not self.is_test:
+                    to_send = translate_chat_gpt(to_translate)
+                    to_send += f"\n\n{post_href}"
+                    send_telegram(to_send)
+                    self.print_send_post()
+                else:
+                    translated = translator.translate(header, dest='ru').text
+                    self.print_send_post()
+                    print(translated)
+                    print(post_href)
+                    print()
 
     @staticmethod
     def get_post_time(post_raw_time: str) -> datetime:
         post_raw_time = post_raw_time.replace("a.m.", "AM").replace("p.m.", "PM")
 
         if post_match := re.search(
-            r"\d{1,2}:\d{1,2} [AP]M ET \w+ \d{1,2}", post_raw_time
+                r"\d{1,2}:\d{1,2} [AP]M ET \w+ \d{1,2}", post_raw_time
         ):
             post_str_time = str(datetime.now().year) + " " + post_match.group(0)
             post_time = datetime.strptime(post_str_time, "%Y %H:%M %p ET %B %d")
@@ -153,7 +163,7 @@ class UsaToday(BaseParser):
             post_time = datetime.strptime(post_str_time, "%B %d, %Y")
 
         elif post_match := re.match(
-            r"Published[:]? \d{1,2}:\d{1,2} [AP]M ET \w+ \d{1,2}, \d{4}", post_raw_time
+                r"Published[:]? \d{1,2}:\d{1,2} [AP]M ET \w+ \d{1,2}, \d{4}", post_raw_time
         ):
             post_str_time = post_match.group(0)
             if ":" in post_str_time.split(maxsplit=1)[0]:
@@ -174,4 +184,3 @@ def test():
     time = 1 + 7
     obj = UsaToday(keywords, time)
     obj.start()
-

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup, Comment
 
+from default import translator
 from openai_gpt import translate_chat_gpt
 from send_tg import send_telegram
 from sites.base import BaseParser
@@ -10,6 +11,7 @@ from sites.base import BaseParser
 
 class KhaleejTimes(BaseParser):
     SITE_URL = "https://www.khaleejtimes.com"
+    language = 'en'
 
     def start(self):
         self.get_categories()
@@ -61,9 +63,9 @@ class KhaleejTimes(BaseParser):
         elif name_time.startswith("day"):
             return datetime.now() - timedelta(days=num_time)
         elif (
-            name_time.startswith("month")
-            or name_time.startswith("week")
-            or name_time.startswith("year")
+                name_time.startswith("month")
+                or name_time.startswith("week")
+                or name_time.startswith("year")
         ):
             return False
 
@@ -106,16 +108,22 @@ class KhaleejTimes(BaseParser):
                 if paragraph.startswith("Last updated:"):
                     paragraph = soup.find_all("p")[3].text.strip()
 
-                to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
-                to_send = translate_chat_gpt(to_translate)
-                to_send += f"\n\n{post_href}"
-                send_telegram(to_send)
-                self.print_send_post()
+                if not self.is_test:
 
-                # TODO
-                # send_telegram(to_send)
+                    to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
+                    to_send = translate_chat_gpt(to_translate)
+                    to_send += f"\n\n{post_href}"
+                    send_telegram(to_send)
+                    self.print_send_post()
+                else:
+                    translated = translator.translate(header, dest='ru').text
+                    self.print_send_post()
+                    print(translated)
+                    print(post_href)
+                    print()
 
-    def get_time_from_string(self, string: str):
+    @staticmethod
+    def get_time_from_string(string: str):
         str_time = string.split(maxsplit=1)[1]
         post_time = datetime.strptime(str_time, "%a %d %b %Y, %H:%M %p")
         return post_time

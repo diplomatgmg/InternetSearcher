@@ -5,20 +5,28 @@ from http import HTTPStatus
 
 import requests
 
-from default import bad_request_message, good_request_message
+import main
+from default import bad_request_message, good_request_message, translator
 
 
 class BaseParser(ABC):
     SITE_URL = None
+    language = None
     session = None
 
     def __init__(self, keywords: list = None, time_interval: int = False) -> None:
-        self.keywords = keywords
+        self.keywords = self.translate_keywords(keywords)
         self.time_interval = datetime.now() - timedelta(hours=time_interval)
+        self.is_test = main.is_test
         self.categories_hrefs = set()
         self.subcategories_hrefs = set()
         self.pages_hrefs = set()
         self.posts_hrefs = set()
+
+    def translate_keywords(self, keywords: list):
+        return [
+            translator.translate(word, self.language, "ru").text.lower() for word in keywords
+        ]
 
     @classmethod
     def get_session(cls):
@@ -31,7 +39,7 @@ class BaseParser(ABC):
 
     @classmethod
     def check_connection(
-        cls, page: str = None, printable=False
+            cls, page: str = None, printable=False
     ) -> requests.Response | bool:
         retries = 0
         session = cls.session or cls.get_session()

@@ -58,8 +58,10 @@ def combine_words(words: str):
     return result
 
 
+is_test = False
+
 if __name__ == "__main__":
-    key = get_openai_api_key()
+    key = get_openai_api_key(is_test)
     if not key:
         exit()
 

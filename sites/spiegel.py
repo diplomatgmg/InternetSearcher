@@ -3,6 +3,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 
+from default import translator
 from openai_gpt import translate_chat_gpt
 from send_tg import send_telegram
 from sites.base import BaseParser
@@ -10,6 +11,8 @@ from sites.base import BaseParser
 
 class Spiegel(BaseParser):
     SITE_URL = "https://www.spiegel.de"
+    language = 'de'
+
 
     def start(self):
         self.get_categories_hrefs()
@@ -110,13 +113,21 @@ class Spiegel(BaseParser):
 
             parse_text = f"{header} {subheader} {parse_paragraphs}".lower()
 
-            # if any(keyword in parse_text.split() for keyword in self.keywords):
-            paragraph = " ".join(paragraphs[0].text.split())
-            to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
-            to_send = translate_chat_gpt(to_translate)
-            to_send += f"\n\n{post_href}"
-            send_telegram(to_send)
-            self.print_send_post()
+            if any(keyword in parse_text.split() for keyword in self.keywords):
+                paragraph = " ".join(paragraphs[0].text.split())
+
+                to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
+                if not self.is_test:
+                    to_send = translate_chat_gpt(to_translate)
+                    to_send += f"\n\n{post_href}"
+                    send_telegram(to_send)
+                    self.print_send_post()
+                else:
+                    translated = translator.translate(header, dest='ru').text
+                    self.print_send_post()
+                    print(translated)
+                    print(post_href)
+                    print()
 
 
 def test():
