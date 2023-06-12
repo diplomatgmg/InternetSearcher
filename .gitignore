@@ -5,3 +5,9 @@
 test.py
 *.log
 openai_key
+
+InternetSearcher.exe
+main.exe
+/build
+/dist
+/main.spec

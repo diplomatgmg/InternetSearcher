@@ -1,1 +1,2 @@
 pyinstaller -F -i "D:\InternetSearcher\icon.ico" "D:\InternetSearcher\main.py"
+pyinstaller -F -i "D:\programming\InternetSearcher\icon.ico" "D:\programming\InternetSearcher\main.py"
