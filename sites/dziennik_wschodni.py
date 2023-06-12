@@ -1,16 +1,14 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 
-from default import translator
-from openai_gpt import translate_chat_gpt
-from send_tg import send_telegram
 from sites.base import BaseParser
 
 
 class DziennikWschodni(BaseParser):
     SITE_URL = "https://www.dziennikwschodni.pl"
     language = 'pl'
+    time_correction = +1
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
@@ -27,11 +25,6 @@ class DziennikWschodni(BaseParser):
         today = datetime.now().strftime("%d-%m-%Y")
         url = f"https://www.dziennikwschodni.pl/data.html?date_begin={last_days}&date_end={today}&kategoria=&search="
         return url
-
-    def start(self):
-        self.get_pages_hrefs()
-        self.get_posts_hrefs()
-        self.send_posts()
 
     def get_pages_hrefs(self):
         current_page = self.SITE_URL
@@ -76,7 +69,7 @@ class DziennikWschodni(BaseParser):
                 post_href = self.get_main_page() + post.find("a", href=True)["href"]
                 self.posts_hrefs.add(post_href)
 
-    def send_posts(self):
+    def check_page_delivery(self):
         for post_href in self.posts_hrefs:
             page = self.check_connection(post_href)
 
@@ -106,17 +99,7 @@ class DziennikWschodni(BaseParser):
                     f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{first_paragraph}"
                 )
 
-                if not self.is_test:
-                    to_send = translate_chat_gpt(to_translate)
-                    to_send += f"\n\n{post_href}"
-                    send_telegram(to_send)
-                    self.print_send_post()
-                else:
-                    translated = translator.translate(header, dest='ru').text
-                    self.print_send_post()
-                    print(translated)
-                    print(post_href)
-                    print()
+                self.send(to_translate, post_href)
 
 
 def test():

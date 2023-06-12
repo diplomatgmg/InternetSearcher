@@ -3,20 +3,13 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 
-from default import translator
-from openai_gpt import translate_chat_gpt
-from send_tg import send_telegram
 from sites.base import BaseParser
 
 
 class SkyNews(BaseParser):
     SITE_URL = "https://news.sky.com"
     language = 'en'
-
-    def start(self):
-        self.get_categories_hrefs()
-        self.get_posts_hrefs()
-        self.send_posts()
+    time_correction = +2
 
     def get_categories_hrefs(self):
         page = self.check_connection()
@@ -53,7 +46,7 @@ class SkyNews(BaseParser):
 
                 self.posts_hrefs.add(post_href)
 
-    def send_posts(self):
+    def check_page_delivery(self):
         for post_href in self.posts_hrefs:
             page = self.check_connection(post_href)
 
@@ -87,17 +80,7 @@ class SkyNews(BaseParser):
 
                 to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
 
-                if not self.is_test:
-                    to_send = translate_chat_gpt(to_translate)
-                    to_send += f"\n\n{post_href}"
-                    send_telegram(to_send)
-                    self.print_send_post()
-                else:
-                    translated = translator.translate(header, dest='ru').text
-                    self.print_send_post()
-                    print(translated)
-                    print(post_href)
-                    print()
+                self.send(to_translate, post_href)
 
     @staticmethod
     def convert_time(raw_time: str):

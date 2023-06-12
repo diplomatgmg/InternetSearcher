@@ -1,11 +1,9 @@
+import logging
 from threading import Thread
 
 import main
-from start_parsers import (
-    start_with_logger,
-)
+import sites
 
-# TODO
 global_keywords = []
 
 
@@ -60,7 +58,7 @@ def search(keywords: list):
 
     print_hours_message(time_interval)
 
-    for parser_class in main.SITES:
+    for parser_class in sites.all_sites.SITES:
         site_thread = Thread(
             target=start_with_logger, args=(parser_class, keywords, time_interval)
         )
@@ -68,3 +66,24 @@ def search(keywords: list):
         site_thread.join()
 
     input("\nПоиск новостей окончен.")
+
+
+def start_with_logger(parser_class, keywords: list, time_interval: int):
+    try:
+        parser_class(keywords, time_interval).start()
+    except:
+        print(
+            f"Ошибка при работе с [{parser_class.__class__.__name__}]. "
+            f"Логи сохранены в файл под названием errors.log",
+        )
+        logging.basicConfig(
+            level=logging.ERROR,
+            filename=f"errors.log",
+            filemode="w",
+            format="%(asctime)s %(levelname)s %(message)s",
+        )
+
+        logging.error(
+            f"Ошибка при работе с [{parser_class.__class__.__name__}]. Keywords: {global_keywords}",
+            exc_info=True,
+        )

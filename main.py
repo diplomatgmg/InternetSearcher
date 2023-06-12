@@ -1,25 +1,8 @@
-import seacher
-from default import check_sites_connection
-from openai_gpt import get_openai_api_key
-from sites.china_daily import ChinaDaily
-from sites.dziennik_wschodni import DziennikWschodni
-from sites.khaleejtimes import KhaleejTimes
-from sites.lefigaro import Lefigaro
-from sites.sky_news import SkyNews
-from sites.spiegel import Spiegel
-from sites.theguadrian import TheGuardian
-from sites.usa_today import UsaToday
-
-SITES = {
-    ChinaDaily,
-    DziennikWschodni,
-    KhaleejTimes,
-    Lefigaro,
-    SkyNews,
-    Spiegel,
-    TheGuardian,
-    UsaToday,
-}
+from managment import seacher
+from managment import settings
+from managment.openai_gpt import get_openai_api_key
+from managment.services import check_sites_connection
+from sites.all_sites import SITES
 
 
 def main(preview=True, old_keywords=None):
@@ -58,10 +41,12 @@ def combine_words(words: str):
     return result
 
 
-is_test = False
-
 if __name__ == "__main__":
-    key = get_openai_api_key(is_test)
+    is_test = settings.is_test
+    if is_test:
+        print('Включен режим отладки\n')
+
+    key = get_openai_api_key(settings.is_test)
     if not key:
         exit()
 
