@@ -125,7 +125,6 @@ class UsaToday(BaseParser):
             if any(keyword in parse_text.split() for keyword in self.keywords):
                 subheader = paragraphs[0].text.strip()
                 paragraph = paragraphs[1].text.strip()
-
                 to_translate = f"{header}\n" f"\n" f"{subheader}\n" f"\n" f"{paragraph}"
 
                 self.send(to_translate, post_href)
@@ -145,7 +144,7 @@ class UsaToday(BaseParser):
             post_time = datetime.strptime(post_str_time, "%B %d, %Y")
 
         elif post_match := re.match(
-                r"Published[:]? \d{1,2}:\d{1,2} [AP]M ET \w+ \d{1,2}, \d{4}", post_raw_time
+                r"Published:? \d{1,2}:\d{1,2} [AP]M ET \w+ \d{1,2}, \d{4}", post_raw_time
         ):
             post_str_time = post_match.group(0)
             if ":" in post_str_time.split(maxsplit=1)[0]:

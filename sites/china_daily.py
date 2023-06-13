@@ -66,7 +66,7 @@ class ChinaDaily(BaseParser):
                 post_time = datetime.datetime.strptime(str_time, "%Y-%m-%d %H:%M")
 
                 if post_time < self.time_interval:
-                    break
+                    continue
 
                 post_raw_href = post.find("a", href=True)["href"]
                 regex = r"www\.chinadaily\.com\.cn\/a\/.+"

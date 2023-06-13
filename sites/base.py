@@ -15,7 +15,8 @@ class BaseParser(ABC):
     SITE_URL = None
     language = None
     session = None
-    time_correction = 0
+    time_correction: int = 0
+    interval: float = 0
 
     def __init__(self, keywords: list = None, time_interval: int = False) -> None:
         self.keywords = self.translate_keywords(keywords)
@@ -44,7 +45,7 @@ class BaseParser(ABC):
 
     @classmethod
     def check_connection(
-            cls, page: str = None, printable=False, interval: float = 0
+            cls, page: str = None, printable=False
     ) -> requests.Response | bool:
         retries = 0
         session = cls.session or cls.get_session()
@@ -59,8 +60,8 @@ class BaseParser(ABC):
                 if printable:
                     good_request_message(cls.__name__)
 
-                if interval:
-                    time.sleep(interval)
+                if cls.interval:
+                    time.sleep(cls.interval)
 
                 return response
 
@@ -75,7 +76,7 @@ class BaseParser(ABC):
                 )
 
                 retries += 1
-                time.sleep(retries)
+                time.sleep(retries * 2)
 
     def start(self):
         self.get_categories_hrefs()
@@ -106,11 +107,11 @@ class BaseParser(ABC):
     def print_send_post(self):
         print(f"[{self.__class__.__name__}] Новость подходит!")
 
-    def send(self, to_translate, post_href):
+    def send(self, to_translate, post_href, need_translate=True):
         is_test = settings.is_test
 
         if not is_test:
-            to_send = translate_chat_gpt(to_translate)
+            to_send = translate_chat_gpt(to_translate) if need_translate else to_translate
             to_send += f"\n\n{post_href}"
             send_telegram(to_send)
             self.print_send_post()

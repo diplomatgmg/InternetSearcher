@@ -64,7 +64,7 @@ class DziennikWschodni(BaseParser):
                 post_time = datetime.strptime(datetime_obj, "%d.%m.%Y %H:%M")
 
                 if post_time < self.time_interval:
-                    break
+                    continue
 
                 post_href = self.get_main_page() + post.find("a", href=True)["href"]
                 self.posts_hrefs.add(post_href)

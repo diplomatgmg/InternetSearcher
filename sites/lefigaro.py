@@ -63,7 +63,7 @@ class Lefigaro(BaseParser):
                 post_time = datetime.strptime(post_raw_time, "%Y-%m-%d %H:%M:%S")
 
                 if post_time < self.time_interval:
-                    break
+                    continue
 
                 post_href = post.find("a", class_="fig-flash__data")["href"]
                 self.posts_hrefs.add(post_href)
