@@ -108,7 +108,7 @@ class BaseParser(ABC):
         print(f"[{self.__class__.__name__}] Новость подходит!")
 
     def send(self, to_translate, post_href, need_translate=True):
-        is_test = settings.is_test
+        is_test = settings.DEBUG
 
         if not is_test:
             to_send = translate_chat_gpt(to_translate) if need_translate else to_translate

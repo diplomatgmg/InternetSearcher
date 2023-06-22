@@ -1,17 +1,18 @@
+import os
 import time
 
 import openai
 
+from managment import settings
+from managment.services import translator
 
-def get_openai_api_key(is_test=False):
-    if is_test:
+
+def get_openai_api_key():
+    if settings.DEBUG:
         return True
-    try:
-        with open("openai_key", "r") as openai_key:
-            return openai_key.read()
-    except FileNotFoundError:
-        with open("openai_key", "w"):
-            pass
+
+    openai_key = os.environ.get('OPENAI_KEY')
+    return openai_key
 
 
 openai.api_key = get_openai_api_key()
@@ -38,5 +39,9 @@ def translate_chat_gpt(message: str):
             raise openai.error.AuthenticationError(
                 "Ошибка при получении токена для ChatGPT. "
                 "Дальнейшая работа программы невозможна. "
+                "Возможно, вы указали неверный токен."
                 "Обратитесь к программисту."
             )
+        except openai.error.APIConnectionError:
+            translated = translator.translate(message, dest='ru').text
+            return translated

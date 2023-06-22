@@ -1,3 +1,7 @@
+import sys
+
+from dotenv import load_dotenv
+
 from managment import seacher
 from managment import settings
 from managment.openai_gpt import get_openai_api_key
@@ -42,12 +46,15 @@ def combine_words(words: str):
 
 
 if __name__ == "__main__":
-    is_test = settings.is_test
+    load_dotenv()
+
+    is_test = settings.DEBUG
     if is_test:
         print('Включен режим отладки\n')
 
-    key = get_openai_api_key(settings.is_test)
+    key = get_openai_api_key()
     if not key:
-        exit()
+        input("Не найден токен для OpenAI. Для выходи нажмите Enter")
+        sys.exit()
 
     main()

@@ -1,13 +1,14 @@
 import time
 
 import requests
-
-token = '5503977230:AAGGMyU2e1Tm4MINenX2qfxRCSWvbeEWz90'
-channel_id = '@fnsj28tof'
+import os
 tries = 0
 
 
 def send_telegram(txt: str):
+    token = os.environ.get('BOT_TOKEN')
+    channel_id = os.environ.get('CHANNEL_ID')
+
     url = "https://api.telegram.org/bot"
     url += token
     method = url + "/sendMessage"
