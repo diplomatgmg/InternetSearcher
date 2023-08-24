@@ -139,6 +139,12 @@ class UsaToday(BaseParser):
             post_str_time = str(datetime.now().year) + " " + post_match.group(0)
             post_time = datetime.strptime(post_str_time, "%Y %H:%M %p ET %B %d")
 
+        elif post_match := re.search(
+                r"\d{1,2}:\d{1,2} [AP]M ET \w+\. \d{1,2}", post_raw_time
+        ):
+            post_str_time = str(datetime.now().year) + " " + post_match.group(0)
+            post_time = datetime.strptime(post_str_time, "%Y %H:%M %p ET %B %d")
+
         elif post_match := re.match(r"\w+ \d{1,2}, \d{4}", post_raw_time):
             post_str_time = post_match.group(0)
             post_time = datetime.strptime(post_str_time, "%B %d, %Y")

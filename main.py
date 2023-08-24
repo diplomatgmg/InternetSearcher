@@ -57,4 +57,7 @@ if __name__ == "__main__":
         input("Не найден токен для OpenAI. Для выходи нажмите Enter")
         sys.exit()
 
-    main()
+    try:
+        main()
+    finally:
+        input('Работа программы завершена.')
