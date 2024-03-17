@@ -17,5 +17,5 @@ SITES = {
     Spiegel,
     TheGuardian,
     UsaToday,
-    LentaRu,
+    LentaRu
 }

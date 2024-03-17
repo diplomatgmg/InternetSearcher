@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from managment import seacher
 from managment import settings
-from managment.openai_gpt import get_openai_api_key
+from managment.openai_gpt import set_openai_api_key
 from managment.services import check_sites_connection
 from sites.all_sites import SITES
 
@@ -52,10 +52,8 @@ if __name__ == "__main__":
     if is_test:
         print('Включен режим отладки\n')
 
-    key = get_openai_api_key()
-    if not key:
-        input("Не найден токен для OpenAI. Для выходи нажмите Enter")
-        sys.exit()
+    set_openai_api_key()
+
 
     try:
         main()

@@ -70,6 +70,8 @@ class LentaRu(BaseParser):
                     next_page_href = self.SITE_URL + next_page['href']
 
     def check_page_delivery(self):
+        print('Lenta Ru -', len(self.posts_hrefs), 'posts')
+
         for post_href in self.posts_hrefs:
             page = self.check_connection(post_href)
 

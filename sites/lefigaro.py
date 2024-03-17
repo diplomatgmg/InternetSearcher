@@ -60,7 +60,7 @@ class Lefigaro(BaseParser):
                 post_raw_time = (
                     post.find("time")["datetime"].replace("CEST", " ").split("+")[0]
                 )
-                post_time = datetime.strptime(post_raw_time, "%Y-%m-%d %H:%M:%S")
+                post_time = datetime.strptime(post_raw_time, "%Y-%m-%dCET%H:%M:%S")
 
                 if post_time < self.time_interval:
                     continue
@@ -69,6 +69,8 @@ class Lefigaro(BaseParser):
                 self.posts_hrefs.add(post_href)
 
     def check_page_delivery(self):
+        print('Lefigaro -', len(self.posts_hrefs), 'posts')
+
         for post_href in self.posts_hrefs:
             page = self.check_connection(post_href)
 

@@ -77,6 +77,7 @@ class ChinaDaily(BaseParser):
                     self.posts_hrefs.add(post_href)
 
     def check_page_delivery(self):
+        print('China Daily -', len(self.posts_hrefs), 'posts')
         for post_href in self.posts_hrefs:
             page = self.check_connection(post_href)
 

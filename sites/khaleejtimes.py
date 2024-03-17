@@ -64,6 +64,7 @@ class KhaleejTimes(BaseParser):
             return False
 
     def check_page_delivery(self):
+        print('Khaleejtimes -', len(self.posts_hrefs), 'posts')
         for post_href in self.posts_hrefs:
             page = self.check_connection(post_href)
 

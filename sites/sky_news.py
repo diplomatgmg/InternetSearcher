@@ -36,15 +36,19 @@ class SkyNews(BaseParser):
             posts = soup.find_all("h3")
 
             for post in posts:
-                post_raw_href = post.find("a")["href"]
+                post_raw_href = post.find("a")
+
+                if not post_raw_href:
+                    continue
+
+                post_raw_href = post_raw_href["href"]
 
                 if post_raw_href.startswith("http://"):
                     continue
 
                 if not post_raw_href.startswith("https://"):
                     post_href = self.SITE_URL + post_raw_href
-
-                self.posts_hrefs.add(post_href)
+                    self.posts_hrefs.add(post_href)
 
     def check_page_delivery(self):
         for post_href in self.posts_hrefs:
