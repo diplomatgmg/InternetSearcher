@@ -33,7 +33,7 @@ class SkyNews(BaseParser):
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-            posts = soup.find_all("h3")
+            posts = soup.find_all("div", class_="ui-story-headline")
 
             for post in posts:
                 post_raw_href = post.find("a")

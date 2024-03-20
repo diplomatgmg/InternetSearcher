@@ -52,9 +52,6 @@ if __name__ == "__main__":
     if is_test:
         print('Включен режим отладки\n')
 
-    set_openai_api_key()
-
-
     try:
         main()
     finally:

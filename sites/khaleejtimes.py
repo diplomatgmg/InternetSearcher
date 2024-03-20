@@ -11,9 +11,8 @@ class KhaleejTimes(BaseParser):
     language = 'en'
     time_correction = 0
 
-
-    def get_categories(self):
-        self.categories_hrefs = [
+    def get_posts_hrefs_from_category(self):
+        categories_hrefs = [
             "https://www.khaleejtimes.com/world",
             "https://www.khaleejtimes.com/opinion",
             "https://www.khaleejtimes.com/business",
@@ -23,8 +22,7 @@ class KhaleejTimes(BaseParser):
             "https://www.khaleejtimes.com/supplements",
         ]
 
-    def get_posts_hrefs_from_category(self):
-        for category_href in self.categories_hrefs:
+        for category_href in categories_hrefs:
             page = self.check_connection(category_href)
 
             if not page:
@@ -72,19 +70,15 @@ class KhaleejTimes(BaseParser):
                 return False
 
             soup = BeautifulSoup(page.content, "html.parser")
-            parse_text_raw = soup.find("div", class_="article-paragraph-wrapper")
+            parse_text_raw = soup.find("div", class_="article-wrapper")
 
-            if not parse_text_raw:
-                parse_text_raw = soup.find("div", class_="article-wrapper")
+            post_raw_time = parse_text_raw.find("div", class_="article-top-author-nw-nf-right")
 
-            if not parse_text_raw:
+            if not post_raw_time:
+                print(post_href)
                 continue
 
-            post_raw_time = (
-                parse_text_raw.find("div", class_="article-top-author-nw-nf-right")
-                .find("p")
-                .text.strip()
-            )
+            post_raw_time = post_raw_time.find("p").text.strip()
 
             post_time = self.get_time_from_string(post_raw_time)
 

@@ -17,16 +17,16 @@ class TheGuardian(BaseParser):
             return False
 
         soup = BeautifulSoup(page.content, "html.parser")
-        subcategories = soup.find_all(
-            "a", {"class": "menu-item__title", "role": "menuitem"}
-        )
+        subcategories = soup.find(
+            "ul", {"role": "menubar"}
+        ).find_all('a', {"role": "menuitem"})
+
 
         for subcategory in subcategories:
             subcategory_href = subcategory["href"]
+
             if subcategory_href.startswith("https://www.theguardian.com"):
-                if not subcategory_href.startswith(
-                        "https://www.theguardian.com/mobile"
-                ):
+                if not subcategory_href.startswith("https://www.theguardian.com/mobile"):
                     self.subcategories_hrefs.add(subcategory_href)
 
     def check_page_delivery(self):

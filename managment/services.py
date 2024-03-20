@@ -16,7 +16,7 @@ def check_sites_connection(sites):
 
 
 def bad_request_message(name_site):
-    print(name_site, "- Потеряно соединение. Обратитесь к программисту.")
+    print(name_site, "- Потеряно соединение.")
 
 
 def good_request_message(name_site):
