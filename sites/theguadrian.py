@@ -105,7 +105,7 @@ class TheGuardian(BaseParser):
     @staticmethod
     def get_post_time(post_raw_time):
         post_raw_time = post_raw_time.split(maxsplit=1)[1]
-        post_raw_time = post_raw_time.replace(" BST", "").replace(" GMT", "")
+        post_raw_time = post_raw_time.replace(" BST", "").replace(" GMT", "").replace(" CET", "")
         post_time = datetime.strptime(post_raw_time, "%d %b %Y %H.%M")
 
         return post_time
