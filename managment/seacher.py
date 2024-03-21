@@ -58,12 +58,16 @@ def search(keywords: list):
 
     print_hours_message(time_interval)
 
+    threads = []
     for parser_class in sites.all_sites.SITES:
         site_thread = Thread(
             target=start_with_logger, args=(parser_class, keywords, time_interval)
         )
         site_thread.start()
-        site_thread.join()
+        threads.append(site_thread)
+
+    for thread in threads:
+        thread.join()
 
     input("\nПоиск новостей окончен.")
 
