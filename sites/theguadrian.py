@@ -21,7 +21,6 @@ class TheGuardian(BaseParser):
             "ul", {"role": "menubar"}
         ).find_all('a', {"role": "menuitem"})
 
-
         for subcategory in subcategories:
             subcategory_href = subcategory["href"]
 

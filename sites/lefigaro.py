@@ -60,7 +60,11 @@ class Lefigaro(BaseParser):
                 post_raw_time = (
                     post.find("time")["datetime"].replace("CEST", " ").split("+")[0]
                 )
-                post_time = datetime.strptime(post_raw_time, "%Y-%m-%dCET%H:%M:%S")
+
+                try:
+                    post_time = datetime.strptime(post_raw_time, "%Y-%m-%dCET%H:%M:%S")
+                except ValueError:
+                    post_time = datetime.strptime(post_raw_time, "%Y-%m-% %H:%M:%S")
 
                 if post_time < self.time_interval:
                     continue
